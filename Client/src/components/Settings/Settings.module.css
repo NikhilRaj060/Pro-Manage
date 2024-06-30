@@ -1,0 +1,34 @@
+.main {
+    width: 85%;
+    background-color: #FFF;
+    padding: 26px 44px;
+}
+
+.header {
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 600;
+    font-family: 'Open Sans' , sans-serif;
+    color: #000000;
+    margin-bottom: 55px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    width: 35%;
+}
+
+.authButton {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #17A2B8;
+    color: #FFF;
+    border-radius: 55px;
+    font-family: "Open Sans", serif;
+    margin-top: 7%;
+}

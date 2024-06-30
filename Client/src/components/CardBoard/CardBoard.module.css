@@ -1,0 +1,36 @@
+.container {
+    min-width: 27%;
+    height: 100%;
+    background-color:#EEF2F5;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    height: 4%;
+    margin-bottom: 10px;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+.add_icon {
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 95%;
+    overflow-y: scroll;
+}
+
+.skeletons_task {
+    border-radius: 20px;
+    height: 9rem;
+}

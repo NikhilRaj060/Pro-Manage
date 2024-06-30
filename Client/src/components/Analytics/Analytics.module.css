@@ -1,0 +1,77 @@
+.main {
+    width: 85%;
+    background-color: #FFF;
+    padding: 26px 44px;
+}
+
+.header {
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 600;
+    font-family: 'Open Sans' , sans-serif;
+    color: #000000;
+    margin-bottom: 55px;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    height: 92%;
+}
+
+.analytics_container {
+    display: flex;
+    width: 35%;
+    height: 40%;
+    padding: 47px 32px;
+    background: #F9FCFF;
+    border-radius: 12px;
+}
+
+.task_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tasks {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task {
+    font-size: 18px;
+    line-height: 25px;
+    font-weight: 400;
+    font-family: 'Open Sans' , sans-serif;
+    color: #000000;
+}
+
+.count {
+    color: #000;
+}
+
+.priority_container {
+    width: 50%;
+    height: 100%;
+    border: 1px solid green;
+}
+
+.task_circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background: #90C4CC;
+}

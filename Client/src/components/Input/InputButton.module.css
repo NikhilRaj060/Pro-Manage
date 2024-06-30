@@ -1,0 +1,102 @@
+.inputbtn {
+  position: relative;
+}
+
+.telDropDown{
+  border: 1px solid #b0bec5;
+  border-right: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.inputbtn label {
+  position: absolute;
+  top: 9px;
+  left: 14px;
+  font-size: 14px;
+  color: #607d8b;
+  text-transform: capitalize;
+  transition: top 0.3s ease, font-size 0.3s ease;
+}
+
+.inputbtn.focused label {
+  top: -8px;
+  font-size: 10px;
+  background-color: #ffff;
+  padding: 0px 7px;
+  border-radius: 15px
+}
+
+.inputbtn input {
+  font-weight: 400;
+  width: 250px;
+  color: #000;
+  background-color: transparent;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  padding: 10px 14px;
+  outline: none;
+  font-size: 15px
+}
+
+input:checked {
+  background:#17A2B8;
+}
+
+input::placeholder {
+  color: #9B959F;
+}
+
+.inputbtn.valuecontained label {
+  top: -8px;
+  font-size: 10px;
+  background-color: #ffff;
+  padding: 0px 7px;
+  border: 2px solid #1539cf;
+  border-radius: 15px
+}
+
+.error {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+}
+
+.error_text {
+  font-size: 14px;
+  color: #DB371F;
+}
+
+.icon_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.input_icon_container {
+  top: 15%;
+  left: 3%;
+  position: absolute;
+}
+
+.icon {
+  display:block;
+  position: absolute;
+  margin-right: 40px;
+  margin-bottom: 20px;
+}
+
+.error_container {
+  display: flex;
+  justify-content: end;
+  color: red;
+  margin-top: 4px;
+  margin-left: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-bottom: 8px;
+}
+
+.input_container {
+  display: flex;
+}

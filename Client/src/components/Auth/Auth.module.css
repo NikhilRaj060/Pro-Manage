@@ -1,0 +1,172 @@
+.main {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+    background-color: #17A2B8;
+}
+
+.image {
+    margin-top: -60px;
+    position: relative;
+    z-index: 99;
+}
+
+.circle_motion {
+    z-index: 1;
+    left: 20%;
+    top: 18%;
+    height: 40%;
+    width: 21%;
+    position: absolute;
+    border-radius: 50%;
+    background: #268D9D;
+}
+
+.auth {
+    width: 40%;
+    height: 100%;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.authContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttonContainer {
+    display: flex;
+    padding: 10px;
+    justify-content: space-between;
+    margin-bottom: 8%;
+}
+
+.buttonGroup {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.button {
+    font-size: 33px;
+    font-weight: 600;
+    font-family: "Open Sans", serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.authButton {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #17A2B8;
+    color: #FFF;
+    border-radius: 55px;
+    font-family: "Open Sans", serif;
+    margin-bottom: 7%;
+}
+
+.authButton_alternative {
+    font-family: "Open Sans", serif;
+    background-color: #FFF;
+    border: 1.4px solid #17A2B8;
+    border-radius: 55px;
+    color: #17A2B8;
+    margin-bottom: 0;
+}
+
+.authForm  {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 8%;
+}
+
+.formButtons {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.submit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.account_text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 19px;
+    color: #828282;
+    font-family: "Open Sans", serif;
+    margin-bottom: 5%;
+}
+
+.submitButtonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.submitButtonGroup {
+    width: 70%;
+}
+
+.text_container {
+    display: flex;
+    flex-direction: column;
+    margin-top: -55px;
+}
+
+.welcome_text {
+    text-align: center;
+    font-size: 34px;
+    line-height: 66px;
+    font-weight: 600;
+    font-family: "Open Sans", serif;
+    color: #FFF;
+}
+
+.text {
+    text-align: center;
+    font-size: 19px;
+    line-height: 38px;
+    font-weight: 400;
+    font-family: "Open Sans", serif;
+    color: #FFF;
+}

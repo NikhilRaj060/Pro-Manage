@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  color: #474444;
+  font-size: 16px;
+  line-height: 24px;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%
+}

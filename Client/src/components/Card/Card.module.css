@@ -1,0 +1,87 @@
+.container {
+    border-radius: 20px;
+    background: #FFF;
+    padding: 24px 19px 19px 24px;
+}
+
+.header , .priority_container , .icon_container , .check_list_conainer , .chip_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    margin-bottom: 8px;
+}
+
+.priority_circle {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 5px;
+    background: green;
+}
+
+.priority , .title {
+    font-size: 9px;
+    line-height: 12px;
+    font-weight: 500;
+    color: #707070;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+.title {
+    font-size: 18px;
+    line-height: 27px;
+    color: #000;
+    margin-bottom: 12px;
+}
+
+.check_list_conainer {
+    margin-bottom: 12px;
+}
+
+.check_list {
+    font-size: 14px;
+    line-height: 17px;
+    color: #000;
+}
+
+.angle_icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 3px;
+    background: #EEECEC;
+    height: 24px;
+    width: 24px;
+}
+
+.task_chip_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.tasks {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 10px;
+}
+
+.task {
+    border: 1px solid #E2E2E2;
+    border-radius: 12px;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}

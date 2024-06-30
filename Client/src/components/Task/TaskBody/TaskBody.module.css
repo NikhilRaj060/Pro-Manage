@@ -1,0 +1,144 @@
+.common_class {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 60px;
+}
+
+.quiz_header {
+    margin-top: 1%;
+    width: 94%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 2%;
+}
+
+.quiz_options {
+    width: 74%;
+    height: 44%;
+    margin-bottom: 3%;
+    display: grid;
+    grid-template-columns: repeat(2, 40%);
+    grid-template-rows: repeat(2, 37%);
+    grid-column-gap: 20%;
+    grid-row-gap: 26%;
+}
+
+.quiz_option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    line-height: 53px;
+    font-weight: 600;
+    background-color: #F0F0F0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.quiz_image_option {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 10px;
+    cursor: pointer;
+    object-fit: fill;
+}
+
+.text_image {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F0F0F0;
+    border-radius: 10px;
+}
+
+.text_image_text {
+    flex-wrap: wrap;
+    height: 100%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    line-height: 53px;
+    font-weight: 600;
+}
+
+.text_image_image_conatiner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 40%;
+}
+
+.text_image_image {
+    height: 90%;
+    cursor: pointer;
+    object-fit: fill;
+    border-radius: 10px;
+}
+
+.is_option_selected {
+    outline: 5px solid #5076FF;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+    .common_class {
+        font-size: 20px;
+        line-height: 30px;
+    }
+
+    .quiz_header {
+        text-align: center;
+        font-size: 30px;
+        line-height: 45px;
+        padding-bottom: 10px;
+    }
+
+    .quiz_options {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .image {
+        height: 50%;
+    }
+
+    .quiz_option {
+        width: 100%;
+        font-size: 20px;
+        line-height: 30px;
+        padding: 7px;
+    }
+
+    .quiz_image_option {
+        width: 100%;
+        height: 11vh;
+        margin-bottom: 10px;
+    }
+
+    .text_image {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .text_image_text {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 36px;
+        width: 60%;
+    }
+
+    .text_image_image_conatiner {
+        width: 40%;
+    }
+
+    .text_image_image {
+        width: 100%;
+        height: auto;
+    }
+}
