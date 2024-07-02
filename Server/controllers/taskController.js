@@ -75,53 +75,33 @@ const createTask = async (req, res, next) => {
 //   }
 // };
 
-// const editQuiz = async (req, res, next) => {
-//   try {
-//     let userId = req?.currentUserId;
-//     const { quizId } = req.params;
-//     const { quiz_name, quiz_type, option_type, timer, questions, impression } =
-//       req.body;
-
-//     const isValid = validatingEachField({
-//       res,
-//       quiz_name,
-//       quiz_type,
-//       option_type,
-//       timer,
-//       questions,
-//     });
-
-//     if (!isValid) return;
-
-//     // Fetching the quiz details from the database
-//     let quiz = await QuizModel.findOne({ quizId, userId });
-
-//     // Check if the quiz exists fro the particular quizId
-//     if (!quiz) {
-//       return res.status(404).json({
-//         error: "Validation failed",
-//         message: "No quiz found with the given quizId",
-//       });
-//     }
-
-//     // Updating the quiz details with the new data
-//     quiz.userId = userId;
-//     quiz.impression = impression;
-//     quiz.quiz_name = quiz_name;
-//     quiz.quiz_type = quiz_type;
-//     quiz.option_type = option_type;
-//     quiz.timer = timer;
-//     quiz.questions = questions;
-
-//     // Saving the updated quiz details back to the database for the updation
-//     await quiz.save();
-
-//     // Return success response
-//     return res.status(200).json({ message: "Quiz updated successfully" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const editTask = async (req, res, next) => {
+  try {
+    let userId = req?.currentUserId;
+    const { taskId } = req.params;
+    const { title, assigned, priority, tasks, type, dueDate } = req.body;
+    const isValid = validatingEachField({ res, title, type, priority, tasks });
+    if (!isValid) return;
+    let task = await TaskModel.findOne({ taskId, userId });
+    if (!task) {
+      return res.status(404).json({
+        error: "Validation failed",
+        message: "No task found with the given taskId",
+      });
+    }
+    task.userId = userId;
+    task.title = title;
+    task.assigned = assigned;
+    task.priority = priority;
+    task.tasks = tasks;
+    task.type = type;
+    task.dueDate = dueDate;
+    await task.save();
+    return res.status(200).json({ message: "Task updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // const updateQuiz = async (req, res, next) => {
 //   try {
@@ -172,24 +152,69 @@ const createTask = async (req, res, next) => {
 
 const getAllTaskDataOverview = async (req, res, next) => {
   try {
-    let userId = req?.currentUserId;
+    const userId = req.currentUserId;
+    const { filter } = req.query;
 
-    let resp = await TaskModel.find({ userId });
-
-    if (!resp) {
-      return res.status(404).json({
+    if (!userId) {
+      return res.status(400).json({
         error: "Validation failed",
-        message: "No Task found",
+        message: "User ID is required",
       });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Tasks fetched successfully", data: resp });
+    let dateFilter = {};
+    const currentDate = new Date();
+
+    switch (filter) {
+      case 'Today':
+        dateFilter = {
+          $gte: new Date(currentDate.setHours(0, 0, 0, 0)),
+          $lt: new Date(currentDate.setHours(23, 59, 59, 999))
+        };
+        break;
+      case 'This Week':
+        const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay()));
+        dateFilter = {
+          $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
+          $lt: new Date(currentDate.setDate(currentDate.getDate() + 6)).setHours(23, 59, 59, 999)
+        };
+        break;
+      case 'This Month':
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        dateFilter = {
+          $gte: startOfMonth,
+          $lt: new Date(endOfMonth.setHours(23, 59, 59, 999))
+        };
+        break;
+      default:
+        break;
+    }
+
+    const query = {
+      userId,
+      ...(filter && { createdAt: dateFilter })
+    };
+
+    const tasks = await TaskModel.find(query);
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(204).json({
+        error: "No Task found",
+        message: "No tasks matched the given filter",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tasks fetched successfully",
+      data: tasks,
+    });
   } catch (error) {
     next(error);
   }
 };
+
+
 const getAllTaskAnalytics = async (req, res, next) => {
   try {
     let userId = req?.currentUserId;
@@ -308,7 +333,9 @@ const updateTaskType = async (req, res, next) => {
     task.type = type;
     await task.save();
 
-    return res.status(200).json({ message: "Task type updated successfully", data: task });
+    return res
+      .status(200)
+      .json({ message: "Task type updated successfully", data: task });
   } catch (error) {
     next(error);
   }
@@ -391,7 +418,7 @@ const validatingEachField = ({ res, title, type, priority, tasks }) => {
 module.exports = {
   createTask,
   // getQuizById,
-  // editQuiz,
+  editTask,
   getAllTaskAnalytics,
   getAllTaskDataOverview,
   updateTaskType,

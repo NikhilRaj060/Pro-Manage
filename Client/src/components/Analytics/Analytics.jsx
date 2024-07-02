@@ -6,8 +6,6 @@ import { prioritysData, tasksData } from "../../lib/analytics";
 const Analytics = () => {
   const [taskData, setTaskData] = useState(tasksData);
   const [priorityData, setPriorityData] = useState(prioritysData);
-  const [isLoading, setIsLoading] = useState(true);
-  const skeletonsOverview = Array.from({ length: 6 });
 
   useEffect(() => {
     const fetchAllDataOverview = async () => {

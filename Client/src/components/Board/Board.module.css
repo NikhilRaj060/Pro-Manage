@@ -39,6 +39,7 @@
 }
 
 .text_title , .date_filter {
+    cursor: pointer;
     font-size: 29px;
     line-height: 43px;
     color: #000000;

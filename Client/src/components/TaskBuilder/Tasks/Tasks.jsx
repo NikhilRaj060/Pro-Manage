@@ -21,7 +21,7 @@ function Tasks({ formData, tIndex, setFormData }) {
   };
 
   const handleRemoveOption = (oIndex) => {
-    const newTasks = formData.tasks.filter((_, index) => index !== oIndex);
+    const newTasks = formData.tasks?.filter((_, index) => index !== oIndex);
     setFormData({
       ...formData,
       tasks: newTasks,

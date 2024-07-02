@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./TaskBuilder.module.css";
 import { toast, Bounce } from "react-toastify";
 import { useModal } from "../../Hook/ModalContext.jsx";
-import { createTask, editQuizDetailsById } from "../../api/task.js";
+import { createTask, editTaskDetailsById } from "../../api/task.js";
 import InputButton from "../Input/InputButton.jsx";
 import { chipList } from "../../lib/chipList.js";
 import Chip from "../Chip/Chip.jsx";
@@ -20,38 +20,38 @@ function TaskBuilder() {
     borderRadius: "4px",
   };
 
-  const [tIndex, setTIndex] = useState(0);
+  const [tIndex] = useState(0);
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState(null);
   const [userData, setUserData] = useState(userdata);
   const {
-    closeQuizBuilderModal,
+    closeTaskBuilderModal,
     closeAllModals,
-    quizData,
+    taskData,
     isEdit,
     createTaskSuccess,
   } = useModal();
   const [isTaskCreating, setIsTaskCreating] = useState(false);
   let isEditPermission = isEdit;
-  const data = quizData;
+  const data = taskData;
 
   const initialFormData = {
-    title: "",
-    priority: {
+    title: data?.title || "",
+    priority: isEditPermission && data?.priority ? data?.priority : {
       code: "",
       color: "",
       title: ""
     },
-    assigned: "",
-    tasks: [
+    assigned: data?.assigned || "",
+    tasks: isEditPermission && data?.tasks ? data?.tasks : [
       {
         title: "",
         completed: false,
       },
     ],
-    dueDate: "",
-    type: "TODO",
+    dueDate: data?.dueDate || "",
+    type: data?.type || "TODO",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -82,7 +82,7 @@ function TaskBuilder() {
 
   const handleCancel = () => {
     resetFormData();
-    closeQuizBuilderModal();
+    closeTaskBuilderModal();
   };
 
   const resetFormData = () => {
@@ -90,13 +90,12 @@ function TaskBuilder() {
   };
 
   const handleCreateOrUpdateTask = async () => {
-    console.log(formData);
     if (!validateForm()) return;
 
     setIsTaskCreating(true);
     let res;
     if (isEditPermission) {
-      res = await editQuizDetailsById(data?.quizId, formData);
+      res = await editTaskDetailsById(data?.taskId, formData);
       if (res && res?.message) {
         setIsTaskCreating(false);
         createTaskSuccess();
@@ -161,11 +160,11 @@ function TaskBuilder() {
   };
 
   const validateForm = () => {
-    if (!title) {
+    if (!formData?.title) {
       toast.error("Title is required.", { transition: Bounce });
       return false;
     }
-    if (!priority) {
+    if (!formData?.priority) {
       toast.error("Priority is required.", { transition: Bounce });
       return false;
     }
@@ -189,7 +188,7 @@ function TaskBuilder() {
             placeholder="Enter Task Title"
             customStyle={customStyle}
             height={40}
-            value={title}
+            value={formData?.title}
             onChange={(e) => {
               setTitle(e.target.value);
               setFormData({ ...formData, title: e.target.value });
@@ -204,7 +203,7 @@ function TaskBuilder() {
             {chipList?.map((chip) => (
               <Chip
                 key={chip.id}
-                outlined={priority !== chip.priority}
+                outlined={formData?.priority?.code !== chip.priority}
                 label={chip?.title}
                 circleColor={chip?.color}
                 fontSize={14}
@@ -238,7 +237,7 @@ function TaskBuilder() {
             className={styles.due_date}
             onClick={() => setIsCalenderOpen(!isCalenderOpen)}
           >
-            {formData?.dueDate ? formData?.dueDate : "Select due date"}
+            {formData?.dueDate ? dayjs(formData?.dueDate).format("MM/DD/YYYY") : "Select due date"}
           </div>
           {isCalenderOpen && (
             <div className={styles.calender_container}>
@@ -252,12 +251,12 @@ function TaskBuilder() {
                   }}
                 >
                   <DateCalendar
-                    value={formData?.dueDate ? dayjs(formData.dueDate) : null}
+                    value={formData?.dueDate ? dayjs(formData?.dueDate) : null}
                     onChange={handleCalenderSelect}
                   />
                   <CustomToolbar
                     handleCalenderSelect={handleCalenderSelect}
-                    value={formData?.dueDate ? dayjs(formData.dueDate) : null}
+                    value={formData?.dueDate ? dayjs(formData?.dueDate) : null}
                     />
                 </Box>
               </LocalizationProvider>

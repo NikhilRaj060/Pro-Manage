@@ -11,14 +11,13 @@ import Skeleton from "@mui/material/Skeleton";
 function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
   const [formData, setFormData] = useState({});
   const {
-    isQuizBuilderModalOpen,
-    openQuizBuilderModal,
-    closeQuizBuilderModal,
+    isTaskBuilderModalOpen,
+    openTaskBuilderModal,
+    closeTaskBuilderModal,
   } = useModal();
   const skeletonsCard = Array.from({ length: 3 });
 
-
-  const quizBuilderStyle = {
+  const taskBuilderStyle = {
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -37,7 +36,7 @@ function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
   };
 
   const handleClick = () => {
-    openQuizBuilderModal(formData, false);
+    openTaskBuilderModal(formData, false);
   };
 
   const handleLoadingChange = (loading) => {
@@ -65,28 +64,30 @@ function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
         </div>
         <div className={styles.card}>
           {isLoading
-            ? skeletonsCard.map((_, index) => (
+            ? skeletonsCard?.map((_, index) => (
                 <Skeleton
                   key={index}
                   className={styles.skeletons_task}
                   variant="rounded"
+                  height={160}
+                  style={{borderRadius:"20px"}}
                 />
               ))
-            : taskData.map((task) => (
+            : taskData?.map((task) => (
                 <Card onLoadingChange={handleLoadingChange} key={task._id} collapseAll={collapseAll} task={task} />
               ))}
         </div>
       </div>
       <Modal
-        open={isQuizBuilderModalOpen}
-        onClose={closeQuizBuilderModal}
+        open={isTaskBuilderModalOpen}
+        onClose={closeTaskBuilderModal}
         sx={{
           "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.2)" },
         }}
         aria-labelledby="modal-task-builder"
         aria-describedby="Modal task builder"
       >
-        <Box sx={{ ...quizBuilderStyle }}>
+        <Box sx={{ ...taskBuilderStyle }}>
           <TaskBuilder />
         </Box>
       </Modal>

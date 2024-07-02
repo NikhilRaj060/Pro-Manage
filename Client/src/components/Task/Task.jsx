@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Quiz.module.css";
+import styles from "./Task.module.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { getQuizDetailsById, updateQuizDetailsById } from "../../api/task";
 import TaskBody from "./TaskBody/TaskBody";
@@ -160,7 +160,7 @@ const Quiz = () => {
           />
         ) : (
           <div className={styles.skeletons}>
-            {skeletonsOverview.map((_, index) => (
+            {skeletonsOverview?.map((_, index) => (
               <Skeleton
                 key={index}
                 variant="rounded"

@@ -43,9 +43,9 @@ const getAllTaskAnalytics = async () => {
   }
 };
 
-const getAllTaskDataOverView = async () => {
+const getAllTaskDataOverView = async (filter) => {
   try {
-    const reqUrl = `${backendUrl}/get-task-data-overview`;
+    const reqUrl = `${backendUrl}/get-task-data-overview?filter=${filter}`;
     const token = localStorage.getItem("token");
     const headers = {
       Authorization: `Bearer ${token}`
@@ -199,14 +199,14 @@ const getQuizDetailsById = async (quizId) => {
   }
 };
 
-const editQuizDetailsById = async (quizId, quiz) => {
+const editTaskDetailsById = async (taskId, task) => {
   try {
-    const reqUrl = `${backendUrl}/edit-quiz/${quizId}`;
+    const reqUrl = `${backendUrl}/edit-task/${taskId}`;
     const token = localStorage.getItem("token");
     const headers = {
       Authorization: `Bearer ${token}`
     };
-    const response = await axios.put(reqUrl, quiz, { headers });
+    const response = await axios.put(reqUrl, task, { headers });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -304,4 +304,4 @@ const deleteTask = async (quizId) => {
   }
 }
 
-export { createTask, getQuizDetailsById, editQuizDetailsById, getAllTaskAnalytics, getAllTaskDataOverView, updateQuizDetailsById, deleteTask ,updateTaskType };
+export { createTask, getQuizDetailsById, editTaskDetailsById, getAllTaskAnalytics, getAllTaskDataOverView, updateQuizDetailsById, deleteTask ,updateTaskType };

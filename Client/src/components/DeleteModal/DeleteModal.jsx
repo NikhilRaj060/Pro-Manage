@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Box } from "@mui/material";
 import { useModal } from "../../Hook/ModalContext";
-import { deleteQuiz } from "../../api/quiz";
+import { deleteTask } from "../../api/task";
 import styles from "./DeleteModal.module.css";
 import { toast , Bounce } from "react-toastify";
 
@@ -25,7 +25,7 @@ const DeleteModal = () => {
     };
 
     const handleDelete = async () => {
-        let res = await deleteQuiz(quizId);
+        let res = await deleteTask(quizId);
         if (res && res.message) {
             handleCancel();
             toast.success(res.message, {

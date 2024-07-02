@@ -3,25 +3,25 @@ import React, { createContext, useState, useContext } from "react";
 const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
-  const [isQuizBuilderModalOpen, setIsQuizBuilderModalOpen] = useState(false);
-  const [quizLink, setQuizLink] = useState('');
-  const [quizData, setQuizData] = useState(null);
+  const [isTaskBuilderModalOpen, setisTaskBuilderModalOpen] = useState(false);
+  const [taskLink, setTaskLink] = useState('');
+  const [taskData, setTaskData] = useState(null);
   const [quizId, setQuizId] = useState("")
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [taskCreated, setTaskCreated] = useState(false);
 
-  const openQuizBuilderModal = (data = null, isEdit) => {
+  const openTaskBuilderModal = (data = null, isEdit) => {
     setIsEdit(isEdit);
-    setQuizData(data);
-    setIsQuizBuilderModalOpen(true);
+    setTaskData(data);
+    setisTaskBuilderModalOpen(true);
   };
 
-  const closeQuizBuilderModal = () => setIsQuizBuilderModalOpen(false);
+  const closeTaskBuilderModal = () => setisTaskBuilderModalOpen(false);
 
   const closeAllModals = () => {
-    setIsQuizBuilderModalOpen(false);
-    setQuizData(null);
+    setisTaskBuilderModalOpen(false);
+    setTaskData(null);
   };
 
   const openDeleteModal = (quizId) => {
@@ -44,15 +44,15 @@ export const ModalProvider = ({ children }) => {
 
   return (
     <ModalContext.Provider value={{
-      isQuizBuilderModalOpen,
-      openQuizBuilderModal,
-      closeQuizBuilderModal,
+      isTaskBuilderModalOpen,
+      openTaskBuilderModal,
+      closeTaskBuilderModal,
       closeAllModals,
       isDeleteModalOpen,
       openDeleteModal,
       closeDeleteModal,
-      quizLink,
-      quizData,
+      taskLink,
+      taskData,
       isEdit,
       quizId,
       taskCreated,

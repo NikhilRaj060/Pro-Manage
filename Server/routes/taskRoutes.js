@@ -9,7 +9,7 @@ router.post("/create-task", verifyToken , taskController.createTask)
 router.patch('/tasks/:id/type', taskController.updateTaskType);
 router.get("/get-all-task-analytics" , verifyToken , taskController.getAllTaskAnalytics)
 router.get("/get-task-data-overview" , verifyToken , taskController.getAllTaskDataOverview)
-// router.put("/edit-quiz/:quizId" , verifyToken , taskController.editQuiz)
+router.put("/edit-task/:taskId" , verifyToken , taskController.editTask)
 // router.put("/update-quiz/:quizId" , taskController.updateQuiz)
 // router.delete("/delete-quiz/:quizId" , verifyToken , taskController.deleteQuiz)
 
