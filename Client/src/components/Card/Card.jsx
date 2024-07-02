@@ -12,32 +12,37 @@ import { toast, Bounce } from "react-toastify";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
-import TaskBuilder from "../TaskBuilder/TaskBuilder.jsx";
 import { Modal, Box } from "@mui/material";
-import DeleteModal from "../DeleteModal/DeleteModal";
-
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
+import Tooltip from "@mui/material/Tooltip";
 
 function Card({ collapseAll, task, onLoadingChange }) {
-  const taskBuilderStyle = {
-    position: "absolute",
+  const conirmationModalStyle = {
+    position: "relative",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "45%",
-    height: "65%",
+    width: "22%",
+    height: "25%",
     bgcolor: "#FFFFFF",
-    borderRadius: 5.5,
+    borderRadius: 2.5,
     outline: "none",
   };
-  
+
   const formatDate = useFormattedDate();
-  const [taskData, setTaskData] = useState(task);
+  const [taskData, setTaskData] = useState([]);
   const [dueDatePassed, setDueDatePassed] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [completedCount, setCompletedCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {isTaskBuilderModalOpen, createTaskSuccess ,openTaskBuilderModal, closeTaskBuilderModal, openDeleteModal, quizCreated, resetQuizCreated } = useModal();
+  const {
+    createTaskSuccess,
+    openTaskBuilderModal,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+  } = useModal();
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,11 +51,13 @@ function Card({ collapseAll, task, onLoadingChange }) {
     setAnchorEl(null);
   };
 
-  console.log(task);
-
   const handleCollapseToggle = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  useEffect(() => {
+    setTaskData(task);
+  }, [task]);
 
   useEffect(() => {
     if (collapseAll) {
@@ -90,7 +97,6 @@ function Card({ collapseAll, task, onLoadingChange }) {
 
   const handleChipClick = async (newType) => {
     try {
-      setIsLoading(true);
       onLoadingChange(true);
       const updatedTask = await updateTaskType(taskData._id, newType);
       if (updatedTask && updatedTask?.message) {
@@ -108,11 +114,9 @@ function Card({ collapseAll, task, onLoadingChange }) {
           transition: Bounce,
           className: "custom_toast",
         });
-        setIsLoading(false);
         onLoadingChange(false);
       }
     } catch (error) {
-      setIsLoading(false);
       onLoadingChange(false);
       console.error("Error updating task type:", error);
     }
@@ -136,6 +140,18 @@ function Card({ collapseAll, task, onLoadingChange }) {
   const handleEdit = () => {
     openTaskBuilderModal(taskData, true);
     handleClose();
+  };
+
+  const handleDelete = () => {
+    openDeleteModal(task?.taskId);
+    handleClose();
+  };
+
+  const truncateText = (text, maxLength) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
   };
 
   return (
@@ -174,11 +190,30 @@ function Card({ collapseAll, task, onLoadingChange }) {
           >
             <MenuItem onClick={handleEdit}>Edit</MenuItem>
             <MenuItem onClick={handleShare}>Share</MenuItem>
-            <MenuItem onClick={handleClose}>Delete</MenuItem> 
+            <MenuItem style={{ color: "#CF3636" }} onClick={handleDelete}>
+              Delete
+            </MenuItem>
           </Menu>
         </div>
       </div>
-      <div className={styles.title}>{task?.title}</div>
+      <Tooltip
+        title={task?.title}
+        placement="bottom"
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: "offset",
+                options: {
+                  offset: [0, -8],
+                },
+              },
+            ],
+          },
+        }}
+      >
+        <div className={styles.title}>{truncateText(task?.title, 35)}</div>
+      </Tooltip>
       <div className={styles.task_list_conainer}>
         <div className={styles.check_list_conainer}>
           <div className={styles.check_list}>
@@ -245,19 +280,18 @@ function Card({ collapseAll, task, onLoadingChange }) {
         </div>
       </div>
       <Modal
-        open={isTaskBuilderModalOpen}
-        onClose={closeTaskBuilderModal}
-        aria-labelledby="modal-task-builder"
-        aria-describedby="Modal for task builder"
+        open={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        aria-labelledby="modal-detel"
+        aria-describedby="Modal for delete"
         sx={{
-          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.2)" },
+          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.1)" },
         }}
       >
-        <Box sx={{ ...taskBuilderStyle }}>
-          <TaskBuilder />
+        <Box sx={{ ...conirmationModalStyle }}>
+          <ConfirmationModal data={"Delete"} />
         </Box>
       </Modal>
-       <DeleteModal />
     </div>
   );
 }

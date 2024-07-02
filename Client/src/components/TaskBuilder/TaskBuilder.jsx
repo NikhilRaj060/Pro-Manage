@@ -3,28 +3,33 @@ import styles from "./TaskBuilder.module.css";
 import { toast, Bounce } from "react-toastify";
 import { useModal } from "../../Hook/ModalContext.jsx";
 import { createTask, editTaskDetailsById } from "../../api/task.js";
+import { getAllTempUser } from "../../api/auth.js";
 import InputButton from "../Input/InputButton.jsx";
 import { chipList } from "../../lib/chipList.js";
 import Chip from "../Chip/Chip.jsx";
 import Tasks from "./Tasks/Tasks.jsx";
 import Dropdown from "../Dropdown/Dropdown.jsx";
-import { userdata } from "../../lib/userData.js";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { Box } from "@mui/material";
 import CustomToolbar from "../CustomToolBar/CustomToolBar.jsx";
+import { decodeToken } from "react-jwt"
 
 function TaskBuilder() {
+  const token = localStorage.getItem("token");
+  const decodedToken = decodeToken(token);
+  const currentUserId = decodedToken?.userId;
   const customStyle = {
     borderRadius: "4px",
   };
 
   const [tIndex] = useState(0);
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState(null);
-  const [userData, setUserData] = useState(userdata);
+  const [userData, setUserData] = useState([]);
   const {
     closeTaskBuilderModal,
     closeAllModals,
@@ -52,9 +57,42 @@ function TaskBuilder() {
     ],
     dueDate: data?.dueDate || "",
     type: data?.type || "TODO",
+    createdBy: data?.createdBy || "",
+    assignedEmail: data?.assignedEmail || "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchUserData = async () => {
+      try {
+        const data = await getAllTempUser();
+        if (data) {
+          let updatedUserData = data.map(user => {
+            let splittedName = user.email.split("@");
+            user.initials = (splittedName[0][0] + splittedName[0][1]).toUpperCase();
+            return user;
+          });
+          setUserData(updatedUserData);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+
+    let dataTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
+    return () => {
+      clearTimeout(dataTimer);
+    };
+  }, []);
 
   const handleSelectPriority = (chip) => {
     setPriority(chip.priority);
@@ -69,11 +107,12 @@ function TaskBuilder() {
   };
 
   const handleSelect = (id) => {
-    const user = userdata.find((user) => user.id === id);
-    setFormData({
-      ...formData,
+    const user = userData?.find((user) => user._id === id);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       assigned: user,
-    });
+      assignedEmail: user.email,
+    }));
   };
 
   const handleFormDataChange = (newFormData) => {
@@ -132,6 +171,10 @@ function TaskBuilder() {
         transition: Bounce,
         className: "custom_toast",
       });
+      navigator.clipboard.writeText(res?.taskLink);
+      createTaskSuccess();
+      handleCancel();
+    } else if (isEditPermission && res?.message) {
       setIsTaskCreating(false);
       createTaskSuccess();
       closeAllModals();
@@ -142,14 +185,6 @@ function TaskBuilder() {
       setIsTaskCreating(false);
     }, 5000);
   };
-
-  useEffect(() => {
-    let updatedUserData = userData?.forEach((user) => {
-      let splittedName = user?.name.split(" ");
-      user.initials = (splittedName[0][0] + splittedName[1][0]).toUpperCase();
-    });
-    setUserData(updatedUserData);
-  });
 
   const handleCalenderSelect = (val) => {
     const formattedDate = val?.$d ? dayjs(val?.$d).format("MM/DD/YYYY") : "";
@@ -175,6 +210,8 @@ function TaskBuilder() {
     return true;
   };
 
+  const canEditAssignee = currentUserId === initialFormData.createdBy;
+  
   return (
     <div className={styles.main}>
       <div className={styles.conatiner}>
@@ -214,14 +251,16 @@ function TaskBuilder() {
           </div>
         </div>
         <div className={styles.assign_conatiner}>
-          <div className={styles.priority}>Assign to</div>
+          <div className={styles.assign}>Assign to</div>
           <div className={styles.dropdown}>
             <Dropdown
               id="person"
               title="Add an assignee"
-              data={userdata}
+              data={userData}
               hasImage
+              selectedId={formData?.assigned?._id}
               onSelect={handleSelect}
+              isReadOnly={!canEditAssignee}
             />
           </div>
         </div>
@@ -257,7 +296,7 @@ function TaskBuilder() {
                   <CustomToolbar
                     handleCalenderSelect={handleCalenderSelect}
                     value={formData?.dueDate ? dayjs(formData?.dueDate) : null}
-                    />
+                  />
                 </Box>
               </LocalizationProvider>
             </div>

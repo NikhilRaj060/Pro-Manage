@@ -1,14 +1,13 @@
 const { v4: uuidv4 } = require("uuid");
 const TaskModel = require("../models/task");
-const moment = require("moment");
+const UserModel = require("../models/user");
 
 const createTask = async (req, res, next) => {
   try {
     let userId = req?.currentUserId;
+    let createdBy = req?.currentUserId;
 
     const { title, assigned, priority, tasks, type, dueDate } = req.body;
-
-    console.log(req.body);
 
     const isValid = validatingEachField({
       res,
@@ -23,6 +22,11 @@ const createTask = async (req, res, next) => {
     const taskId = uuidv4();
     let taskLink = `${process.env.FRONTEND_URL}/task/${taskId}`;
 
+    let assignedEmail = null;
+    if (assigned && assigned.email) {
+      assignedEmail = assigned.email;
+    }
+
     const newTask = new TaskModel({
       userId,
       taskId,
@@ -32,7 +36,9 @@ const createTask = async (req, res, next) => {
       priority,
       assigned: assigned ? assigned : {},
       tasks,
-      dueDate: dueDate ? dueDate : "",
+      dueDate: dueDate ? dueDate : null,
+      createdBy,
+      assignedEmail,
     });
 
     let resp = await newTask.save();
@@ -47,39 +53,13 @@ const createTask = async (req, res, next) => {
   }
 };
 
-// const getQuizById = async (req, res, next) => {
-//   try {
-//     const { quizId } = req.params;
 
-//     if (!quizId) {
-//       return res
-//         .status(400)
-//         .json({ error: "Validation failed", message: "Invalid quizId" });
-//     }
-
-//     let quiz = await QuizModel.findOne({ quizId });
-
-//     if (!quiz) {
-//       return res.status(404).json({
-//         error: "Validation failed",
-//         message: "No quiz found with given quizId",
-//       });
-//     }
-
-//     quiz.impression += 1;
-//     await quiz.save();
-
-//     return res.status(200).json({ quiz });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 const editTask = async (req, res, next) => {
   try {
     let userId = req?.currentUserId;
     const { taskId } = req.params;
-    const { title, assigned, priority, tasks, type, dueDate } = req.body;
+    const { title, assigned, priority, tasks, type, dueDate , createdBy , assignedEmail } = req.body;
     const isValid = validatingEachField({ res, title, type, priority, tasks });
     if (!isValid) return;
     let task = await TaskModel.findOne({ taskId, userId });
@@ -96,59 +76,14 @@ const editTask = async (req, res, next) => {
     task.tasks = tasks;
     task.type = type;
     task.dueDate = dueDate;
+    task.createdBy = createdBy
+    task.assignedEmail = assignedEmail
     await task.save();
     return res.status(200).json({ message: "Task updated successfully" });
   } catch (error) {
     next(error);
   }
 };
-
-// const updateQuiz = async (req, res, next) => {
-//   try {
-//     const { quizId } = req.params;
-//     const { quiz_name, quiz_type, option_type, timer, questions, impression } =
-//       req.body;
-
-//     // Validate each field
-//     const isValid = validatingEachField({
-//       res,
-//       quiz_name,
-//       quiz_type,
-//       option_type,
-//       timer,
-//       questions,
-//     });
-
-//     if (!isValid) return;
-
-//     // Fetching the quiz details from the database using quizId
-//     let quiz = await QuizModel.findOne({ quizId });
-
-//     // Check if the quiz exists for the particular quizId
-//     if (!quiz) {
-//       return res.status(404).json({
-//         error: "Validation failed",
-//         message: "No quiz found with the given quizId",
-//       });
-//     }
-
-//     // Updating the quiz details with the new data
-//     if (quiz_name) quiz.quiz_name = quiz_name;
-//     if (quiz_type) quiz.quiz_type = quiz_type;
-//     if (option_type) quiz.option_type = option_type;
-//     if (timer) quiz.timer = timer;
-//     if (questions) quiz.questions = questions;
-//     if (impression) quiz.impression = impression;
-
-//     // Saving the updated quiz details back to the database
-//     await quiz.save();
-
-//     // Return success response
-//     return res.status(200).json({ message: "Quiz updated successfully" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 const getAllTaskDataOverview = async (req, res, next) => {
   try {
@@ -162,29 +97,51 @@ const getAllTaskDataOverview = async (req, res, next) => {
       });
     }
 
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        error: "Validation failed",
+        message: "User not found",
+      });
+    }
+
+    const assignedEmail = user.email; // Assuming email is stored in user document
+
     let dateFilter = {};
     const currentDate = new Date();
 
     switch (filter) {
-      case 'Today':
+      case "Today":
         dateFilter = {
           $gte: new Date(currentDate.setHours(0, 0, 0, 0)),
-          $lt: new Date(currentDate.setHours(23, 59, 59, 999))
+          $lt: new Date(currentDate.setHours(23, 59, 59, 999)),
         };
         break;
-      case 'This Week':
-        const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay()));
+      case "This Week":
+        const startOfWeek = new Date(
+          currentDate.setDate(currentDate.getDate() - currentDate.getDay())
+        );
         dateFilter = {
           $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
-          $lt: new Date(currentDate.setDate(currentDate.getDate() + 6)).setHours(23, 59, 59, 999)
+          $lt: new Date(
+            currentDate.setDate(currentDate.getDate() + 6)
+          ).setHours(23, 59, 59, 999),
         };
         break;
-      case 'This Month':
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      case "This Month":
+        const startOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        );
+        const endOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        );
         dateFilter = {
           $gte: startOfMonth,
-          $lt: new Date(endOfMonth.setHours(23, 59, 59, 999))
+          $lt: new Date(endOfMonth.setHours(23, 59, 59, 999)),
         };
         break;
       default:
@@ -192,8 +149,11 @@ const getAllTaskDataOverview = async (req, res, next) => {
     }
 
     const query = {
-      userId,
-      ...(filter && { createdAt: dateFilter })
+      $or: [
+        { userId },
+        { assignedEmail }
+      ],
+      ...(filter && { createdAt: dateFilter }),
     };
 
     const tasks = await TaskModel.find(query);
@@ -244,6 +204,9 @@ const getAllTaskAnalytics = async (req, res, next) => {
       DD: 0,
     };
 
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
     tasks.forEach((task) => {
       switch (task.type) {
         case "BACKLOG":
@@ -276,7 +239,7 @@ const getAllTaskAnalytics = async (req, res, next) => {
           break;
       }
 
-      if (task.date && new Date(task.date) < new Date()) {
+      if (task.dueDate && new Date(task.dueDate) < startOfToday) {
         priorityCounts.DD++;
       }
     });
@@ -293,31 +256,35 @@ const getAllTaskAnalytics = async (req, res, next) => {
   }
 };
 
-// const deleteTask = async (req, res, next) => {
-//   try {
-//     let userId = req?.currentUserId;
-//     const { quizId } = req.params;
+const deleteTask = async (req, res, next) => {
+  try {
+    let userId = req?.currentUserId;
+    const { taskId } = req.params;
 
-//     if (!quizId) {
-//       return res
-//         .status(400)
-//         .json({ error: "Validation failed", message: "Invalid quizId" });
-//     }
+    if (!taskId) {
+      return res
+        .status(400)
+        .json({ error: "Validation failed", message: "Invalid taskId" });
+    }
 
-//     let quiz = await QuizModel.findOneAndDelete({ quizId, userId });
+    let task = await TaskModel.findOneAndDelete({ taskId, userId });
 
-//     if (!quiz) {
-//       return res.status(404).json({
-//         error: "Validation failed",
-//         message: "No quiz found with given quizId",
-//       });
-//     }
+    if ( userId != task?.createdBy ) {
+      return res.status(403).json({ error: "Forbidden, Sorry you can not delete this task.", message: "Unauthorized" });
+    }
 
-//     return res.status(200).json({ message: "Quiz deleted successfully" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    if (!task) {
+      return res.status(404).json({
+        error: "Validation failed",
+        message: "No task found with given taskId",
+      });
+    }
+
+    return res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const updateTaskType = async (req, res, next) => {
   try {
@@ -417,11 +384,9 @@ const validatingEachField = ({ res, title, type, priority, tasks }) => {
 
 module.exports = {
   createTask,
-  // getQuizById,
   editTask,
   getAllTaskAnalytics,
   getAllTaskDataOverview,
   updateTaskType,
-  // deleteTask,
-  // updateQuiz,
+  deleteTask,
 };

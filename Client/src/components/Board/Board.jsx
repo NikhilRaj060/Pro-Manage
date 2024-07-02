@@ -9,14 +9,30 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import { GoPeople } from "react-icons/go";
+import AddUserModal from "../AddUserModal/AddUserModal";
+import { Modal, Box } from "@mui/material";
+
 
 export default function Board() {
+  const userModalStyle = {
+    position: "relative",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "45%",
+    height: "30%",
+    bgcolor: "#FFFFFF",
+    borderRadius: 2.5,
+    outline: "none",
+    padding: "2%",
+  };
   const formatDate = useFormattedDate();
   const [taskData, setTaskData] = useState([]);
   const [name] = useState(localStorage.getItem("name"));
   const [isLoading, setIsLoading] = useState(true);
-  const { taskCreated, resetTaskCreated } = useModal();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const { taskCreated, resetTaskCreated , isAddUserModalOpen, closeAddUserModal , openAddUserModal } = useModal();
+  const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("This Week");
 
@@ -42,15 +58,32 @@ export default function Board() {
   };
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     fetchAllDataOverview(filter);
+
+    let dataTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
+    return () => {
+      clearTimeout(dataTimer);
+    };
   }, [filter]);
 
   useEffect(() => {
     if (taskCreated) {
+      setIsLoading(true)
       fetchData(filter);
       resetTaskCreated();
     }
+
+    let dataTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
+    return () => {
+      clearTimeout(dataTimer);
+    };
   }, [taskCreated, filter]);
 
   const fetchData = async (filter) => {
@@ -75,6 +108,10 @@ export default function Board() {
     handleClose();
   };
 
+  const handleAddPeople = () => {
+    openAddUserModal()
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -82,8 +119,13 @@ export default function Board() {
           <div className={styles.overview_title}>{`Welcome! ${name}`}</div>
           <div className={styles.overview_date}>{formatDate(date, true)}</div>
         </div>
-        <div className={styles.text}>
-          <div className={styles.text_title}>Board</div>
+        <div className={styles.board}>
+          <div className={styles.text_title}>
+            Board
+            <div className={styles.text_title_sub} onClick={handleAddPeople}>
+              <GoPeople /> Add People
+            </div>
+          </div>
           <div className={styles.date_filter} onClick={handleClick}>
             {filter}
             {isOpen ? (
@@ -119,7 +161,7 @@ export default function Board() {
             >
               <MenuItem onClick={() => handleFilter("This Week")}>This Week</MenuItem>
               <MenuItem onClick={() => handleFilter("Today")}>Today</MenuItem>
-              <MenuItem onClick={() => handleFilter("This Month")}>This Month</MenuItem> 
+              <MenuItem onClick={() => handleFilter("This Month")}>This Month</MenuItem>
             </Menu>
           </div>
         </div>
@@ -135,6 +177,19 @@ export default function Board() {
           />
         ))}
       </div>
+      <Modal
+        open={isAddUserModalOpen}
+        onClose={closeAddUserModal}
+        aria-labelledby="modal-detel"
+        aria-describedby="Modal for delete"
+        sx={{
+          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.1)" },
+        }}
+      >
+        <Box sx={{ ...userModalStyle }}>
+          <AddUserModal />
+        </Box>
+      </Modal>
     </div>
   );
 }

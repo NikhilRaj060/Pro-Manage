@@ -26,7 +26,6 @@ const Analytics = () => {
 
           setTaskData(updatedTasksData);
           setPriorityData(updatedPriorityData);
-          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error fetching task analytics:", error);

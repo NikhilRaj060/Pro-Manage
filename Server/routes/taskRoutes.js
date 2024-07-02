@@ -11,6 +11,6 @@ router.get("/get-all-task-analytics" , verifyToken , taskController.getAllTaskAn
 router.get("/get-task-data-overview" , verifyToken , taskController.getAllTaskDataOverview)
 router.put("/edit-task/:taskId" , verifyToken , taskController.editTask)
 // router.put("/update-quiz/:quizId" , taskController.updateQuiz)
-// router.delete("/delete-quiz/:quizId" , verifyToken , taskController.deleteQuiz)
+router.delete("/delete-task/:taskId" , verifyToken , taskController.deleteTask)
 
 module.exports = router;

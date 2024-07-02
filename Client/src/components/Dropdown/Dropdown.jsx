@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import useOutsideClick from "../../Hook/useOutsideClick";
 import styles from "./Dropdown.module.css";
@@ -14,21 +13,16 @@ function Dropdown({
   style,
   selectedId,
   onSelect,
+  isReadOnly,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(
-    selectedId ? data?.find((item) => item.id === selectedId) : undefined
+    selectedId ? data?.find((item) => item._id === selectedId) : undefined
   );
-
-  const handleChange = (item) => {
-    setSelectedItem(item);
-    onSelect && onSelect(item.id);
-    setIsOpen(false);
-  };
 
   useEffect(() => {
     if (selectedId && data) {
-      const newSelectedItem = data.find((item) => item.id === selectedId);
+      const newSelectedItem = data?.find((item) => item._id === selectedId);
       newSelectedItem && setSelectedItem(newSelectedItem);
     } else {
       setSelectedItem(undefined);
@@ -40,6 +34,20 @@ function Dropdown({
     ref: dropdownRef,
     handler: () => setIsOpen(false),
   });
+
+  const handleToggleDropdown = () => {
+    if (!isReadOnly) {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleSelectItem = (item) => {
+    if (!isReadOnly) {
+      setSelectedItem(item);
+      setIsOpen(false);
+      onSelect && onSelect(item._id);
+    }
+  };
 
   const dropdownClass = classNames(styles.dropdown_base, {
     [styles.dropdownBottomRight]: position === "bottom-right",
@@ -56,11 +64,12 @@ function Dropdown({
         aria-haspopup="true"
         aria-expanded={isOpen}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleDropdown}
         className={styles.dropwonbutton}
         style={style}
+        disabled={isReadOnly}
       >
-        <span className={styles.title_name}>{selectedItem?.name || title}</span>
+        <span className={styles.title_name}>{selectedItem?.email || title}</span>
         <GoChevronDown
           size={20}
           className={styles.angle}
@@ -76,18 +85,19 @@ function Dropdown({
             className={styles.menu_ul}
           >
             {data?.map((item) => (
-              <li key={item.id} className={styles.list_item}>
+              <li key={item._id} className={styles.list_item}>
                 <div className={styles.user_info}>
                   <div loading="lazy" className={styles.initials}>
                     {item.initials}
                   </div>
-                  <span className={styles.email}>{item.name}</span>
+                  <span className={styles.email}>{item.email}</span>
                 </div>
                 <span
-                  onClick={() => handleChange(item)}
+                  onClick={() => handleSelectItem(item)}
                   className={styles.assign}
+                  style={isReadOnly ? { cursor: "not-allowed" } : {}}
                 >
-                  Assign
+                  {selectedItem?._id === item._id ? "Assigned" : "Assign"}
                 </span>
               </li>
             ))}

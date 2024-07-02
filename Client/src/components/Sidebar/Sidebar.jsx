@@ -3,18 +3,36 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { sideBarMenu } from "../../lib/sideBarMenu";
 import image from "../../Image/codesandbox.svg";
+import { useModal } from "../../Hook/ModalContext";
+import { Modal, Box } from "@mui/material";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 
 const Sidebar = React.memo(() => {
+  const conirmationModalStyle = {
+    position: "relative",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "22%",
+    height: "25%",
+    bgcolor: "#FFFFFF",
+    borderRadius: 2.5,
+    outline: "none",
+  };
   const location = useLocation();
   const navigate = useNavigate();
+  const {
+    isLogOutModalOpen,
+    openLogOutModal,
+    closeLogoutModal,
+  } = useModal();
 
   sideBarMenu.forEach((element) => {
     element.isActive = location.pathname.includes(element.route);
   });
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("auth/login");
+    openLogOutModal();
   };
 
   const handleClick = (element) => {
@@ -54,6 +72,19 @@ const Sidebar = React.memo(() => {
         Log out
         </div>
       </div>
+      <Modal
+        open={isLogOutModalOpen}
+        onClose={closeLogoutModal}
+        aria-labelledby="modal-detel"
+        aria-describedby="Modal for delete"
+        sx={{
+          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+        }}
+      >
+        <Box sx={{ ...conirmationModalStyle }}>
+          <ConfirmationModal data={"Log out"} />
+        </Box>
+      </Modal>
     </div>
   );
 });

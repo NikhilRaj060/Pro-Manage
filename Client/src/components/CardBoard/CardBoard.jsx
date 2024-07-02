@@ -9,7 +9,7 @@ import TaskBuilder from "../TaskBuilder/TaskBuilder";
 import Skeleton from "@mui/material/Skeleton";
 
 function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(taskData);
   const {
     isTaskBuilderModalOpen,
     openTaskBuilderModal,
@@ -82,7 +82,7 @@ function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
         open={isTaskBuilderModalOpen}
         onClose={closeTaskBuilderModal}
         sx={{
-          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.2)" },
+          "& .MuiBackdrop-root": { backgroundColor: "rgba(0, 0, 0, 0.1)" },
         }}
         aria-labelledby="modal-task-builder"
         aria-describedby="Modal task builder"

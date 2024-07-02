@@ -4,10 +4,12 @@ const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
   const [isTaskBuilderModalOpen, setisTaskBuilderModalOpen] = useState(false);
-  const [taskLink, setTaskLink] = useState('');
+  const [taskLink, setTaskLink] = useState("");
   const [taskData, setTaskData] = useState(null);
-  const [quizId, setQuizId] = useState("")
+  const [taskId, setTaskId] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLogOutModalOpen, setIsLogOutModalOpen] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [taskCreated, setTaskCreated] = useState(false);
 
@@ -24,15 +26,31 @@ export const ModalProvider = ({ children }) => {
     setTaskData(null);
   };
 
-  const openDeleteModal = (quizId) => {
-    setQuizId(quizId)
+  const openDeleteModal = (taskId) => {
+    setTaskId(taskId);
     setIsDeleteModalOpen(true);
-  }
+  };
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
-    setQuizId(null);
+    setTaskId(null);
   };
 
+  const openLogOutModal = () => {
+    setIsLogOutModalOpen(true);
+    setTaskId(null);
+  };
+  const closeLogoutModal = () => {
+    setIsLogOutModalOpen(false);
+    setTaskId(null);
+  };
+  const openAddUserModal = () => {
+    setIsAddUserModalOpen(true);
+  };
+
+  const closeAddUserModal = () => {
+    setIsAddUserModalOpen(false);
+    setTaskId(null);
+  };
 
   const createTaskSuccess = () => {
     setTaskCreated(true);
@@ -43,22 +61,30 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{
-      isTaskBuilderModalOpen,
-      openTaskBuilderModal,
-      closeTaskBuilderModal,
-      closeAllModals,
-      isDeleteModalOpen,
-      openDeleteModal,
-      closeDeleteModal,
-      taskLink,
-      taskData,
-      isEdit,
-      quizId,
-      taskCreated,
-      createTaskSuccess,
-      resetTaskCreated
-    }}>
+    <ModalContext.Provider
+      value={{
+        isTaskBuilderModalOpen,
+        openTaskBuilderModal,
+        closeTaskBuilderModal,
+        closeAllModals,
+        isDeleteModalOpen,
+        openDeleteModal,
+        closeDeleteModal,
+        isLogOutModalOpen,
+        openLogOutModal,
+        closeLogoutModal,
+        isAddUserModalOpen,
+        openAddUserModal,
+        closeAddUserModal,
+        taskLink,
+        taskData,
+        isEdit,
+        taskId,
+        taskCreated,
+        createTaskSuccess,
+        resetTaskCreated,
+      }}
+    >
       {children}
     </ModalContext.Provider>
   );

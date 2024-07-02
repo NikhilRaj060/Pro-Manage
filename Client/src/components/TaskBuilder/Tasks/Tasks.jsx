@@ -85,10 +85,10 @@ function Tasks({ formData, tIndex, setFormData }) {
           </div>
         ))}
       </div>
-      <div className={`${styles.add}`} onClick={handleAddOption}>
+      <span className={`${styles.add}`} onClick={handleAddOption}>
         <MdAdd className={styles.add_icon} />
         Add New
-      </div>
+      </span>
     </div>
   );
 }

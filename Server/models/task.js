@@ -74,6 +74,14 @@ const TasksSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  createdBy: {
+    type: String,
+    required: true,
+  },
+  assignedEmail: {
+    type: String,
+    default: null,
+  },
 },{timestamps: {createdAt: 'createdAt' , updatedAt: "updatedAt" }})
 
 module.exports = mongoose.model("Tasks", TasksSchema);

@@ -1,10 +1,11 @@
 const UserModel = require("../models/user");
+const TempUserModel = require("../models/tempuser");
 const bycrpt = require("bcrypt");
-const jwt =  require('jsonwebtoken')
-const registerUser = async (req, res ,next) => {
+const jwt = require("jsonwebtoken");
+const registerUser = async (req, res, next) => {
   try {
-    const { name, email , password , confirmPassword } = req.body;
-    if (!email || !name || !password , !confirmPassword) {
+    const { name, email, password, confirmPassword } = req.body;
+    if ((!email || !name || !password, !confirmPassword)) {
       return res.status(400).json({ errorMessage: "Bad Request" });
     }
     const isExistingUser = await UserModel.findOne({ email });
@@ -33,10 +34,11 @@ const registerUser = async (req, res ,next) => {
         .json({ errorMessage: "Something went wrong while registering" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
-const loginUser = async (req, res , next) => {
+
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -49,17 +51,61 @@ const loginUser = async (req, res , next) => {
         .json({ errorMessage: "User doesn't exist, Please Register." });
     }
     //JWT implementation
-    let token = jwt.sign({userId: userDetails._id}, process.env.JWT_SECRECT_KEY, { expiresIn:'60h' })
-    let isPassowordMatch = await bycrpt.compare(password, userDetails?.password);
+    let token = jwt.sign(
+      { userId: userDetails._id },
+      process.env.JWT_SECRECT_KEY,
+      { expiresIn: "60h" }
+    );
+    let isPassowordMatch = await bycrpt.compare(
+      password,
+      userDetails?.password
+    );
     if (!isPassowordMatch) {
-        return res
-          .status(500)
-          .json({ errorMessage: "Invalid credentials" });
+      return res.status(500).json({ errorMessage: "Invalid credentials" });
     }
-    return res.json({ message: "User loggedin sucessfully", name: userDetails?.name , token });
-  }catch (error) {
-    next(error)
+    return res.json({
+      message: "User loggedin sucessfully",
+      name: userDetails?.name,
+      token,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
-module.exports = { registerUser  , loginUser};
+const addTempUser = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ errorMessage: "Email is required" });
+    }
+
+    let user = await TempUserModel.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({ errorMessage: "User alreadry exist." });
+    }
+
+    const newUser = new TempUserModel({
+      email,
+      name: email.split("@")[0],
+    });
+    user = await newUser.save();
+
+    return res.status(201).json({ message: "User added successfully", user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllTempUser = async (req, res, next) => {
+  try {
+    const users = await TempUserModel.find();
+    return res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+module.exports = { registerUser, loginUser, addTempUser , getAllTempUser };

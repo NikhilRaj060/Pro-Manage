@@ -278,9 +278,9 @@ const updateQuizDetailsById = async (quizId, quiz) => {
   }
 };
 
-const deleteTask = async (quizId) => {
+const deleteTask = async (taskId) => {
   try {
-    const reqUrl = `${backendUrl}/delete-quiz/${quizId}`;
+    const reqUrl = `${backendUrl}/delete-task/${taskId}`;
     const token = localStorage.getItem("token");
     const headers = {
       Authorization: `Bearer ${token}`
