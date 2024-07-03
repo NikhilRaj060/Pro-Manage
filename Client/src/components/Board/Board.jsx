@@ -99,10 +99,6 @@ export default function Board() {
     }
   };
 
-  const handleLoadingChange = (loading) => {
-    setIsLoading(loading);
-  };
-
   const handleFilter = (filter) => {
     setFilter(filter);
     handleClose();
@@ -174,7 +170,6 @@ export default function Board() {
         {cardMenu?.map((card) => (
           <CardBoard
             key={card.id}
-            setLoadingChange={handleLoadingChange}
             isLoading={isLoading}
             data={card}
             taskData={taskData?.filter((task) => task.type === card.type)}

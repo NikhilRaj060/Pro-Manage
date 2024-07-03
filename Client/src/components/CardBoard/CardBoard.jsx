@@ -8,7 +8,7 @@ import { useModal } from "../../Hook/ModalContext";
 import TaskBuilder from "../TaskBuilder/TaskBuilder";
 import Skeleton from "@mui/material/Skeleton";
 
-function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
+function CardBoard({ isLoading , data, taskData }) {
   const [formData, setFormData] = useState(taskData);
   const {
     isTaskBuilderModalOpen,
@@ -37,10 +37,6 @@ function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
 
   const handleClick = () => {
     openTaskBuilderModal(formData, false);
-  };
-
-  const handleLoadingChange = (loading) => {
-    setLoadingChange(loading);
   };
 
   return (
@@ -74,7 +70,7 @@ function CardBoard({ isLoading , data, taskData , setLoadingChange }) {
                 />
               ))
             : taskData?.map((task) => (
-                <Card onLoadingChange={handleLoadingChange} key={task._id} collapseAll={collapseAll} task={task} />
+                <Card key={task._id} collapseAll={collapseAll} task={task} />
               ))}
         </div>
       </div>

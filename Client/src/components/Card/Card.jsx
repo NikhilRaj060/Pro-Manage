@@ -18,7 +18,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 
-function Card({ collapseAll, task, onLoadingChange }) {
+function Card({ collapseAll, task }) {
   const conirmationModalStyle = {
     position: "relative",
     top: "50%",
@@ -102,14 +102,12 @@ function Card({ collapseAll, task, onLoadingChange }) {
         setTaskData(updatedTask.data);
       }
     } catch (error) {
-      onLoadingChange(false);
       console.error("Error updating task type:", error);
     }
   };
 
   const handleChipClick = async (newType) => {
     try {
-      onLoadingChange(true);
       const updatedTask = await updateTaskType(taskData._id, newType, "type");
       if (updatedTask && updatedTask?.message) {
         createTaskSuccess();
@@ -126,10 +124,8 @@ function Card({ collapseAll, task, onLoadingChange }) {
           transition: Bounce,
           className: "custom_toast",
         });
-        onLoadingChange(false);
       }
     } catch (error) {
-      onLoadingChange(false);
       console.error("Error updating task type:", error);
     }
   };
