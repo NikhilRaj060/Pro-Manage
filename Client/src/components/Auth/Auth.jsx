@@ -6,9 +6,9 @@ import { isWeakPassword, isValidEmail, isValidName } from "../../lib/auth";
 import { registerUser, loginUser } from "../../api/auth";
 import image from "../../Image/art.svg";
 import CircularProgress from "@mui/material/CircularProgress";
-import {ic_mail_outline as mailIcon} from 'react-icons-kit/md/ic_mail_outline'
-import {ic_person_outline_outline as personIcon} from 'react-icons-kit/md/ic_person_outline_outline'
-import {ic_lock_outline as lockIcon} from 'react-icons-kit/md/ic_lock_outline'
+import { ic_mail_outline as mailIcon } from "react-icons-kit/md/ic_mail_outline";
+import { ic_person_outline_outline as personIcon } from "react-icons-kit/md/ic_person_outline_outline";
+import { ic_lock_outline as lockIcon } from "react-icons-kit/md/ic_lock_outline";
 
 export default function Auth() {
   const customStyle = {
@@ -161,8 +161,10 @@ export default function Auth() {
   return (
     <div className={styles.main}>
       <div className={styles.image_container}>
-        <img className={styles.image} src={image} alt="image" />
-        <div className={styles.circle_motion}></div>
+        <div className={styles.container}>
+          <img className={styles.image} src={image} alt="image" />
+          <div className={styles.circle_motion}></div>
+        </div>
         <div className={styles.text_container}>
           <div className={styles.welcome_text}>Welcome aboard my friend</div>
           <p className={styles.text}>just a couple of clicks and we start</p>
@@ -190,8 +192,8 @@ export default function Auth() {
                   value={nameError ? "" : name}
                   error={nameError}
                   onChange={handleNameChange}
-                  />
-                )}
+                />
+              )}
               <InputButton
                 fullWidth
                 placeholder="Email"
@@ -201,7 +203,7 @@ export default function Auth() {
                 value={emailError ? "" : email}
                 error={emailError}
                 onChange={handleEmailChange}
-                />
+              />
               <InputButton
                 fullWidth
                 placeholder="Password"
@@ -211,17 +213,17 @@ export default function Auth() {
                 value={passwordError ? "" : password}
                 error={passwordError}
                 onChange={handlePasswordChange}
-                />
+              />
               {!isLogin && (
                 <InputButton
-                error={error}
-                fullWidth
-                placeholder="Confirm password"
-                type="password"
-                customStyle={customStyle}
-                inputIcon={lockIcon}
-                value={error ? "" : confirmPassword}
-                onChange={handleConfirmPasswordChange}
+                  error={error}
+                  fullWidth
+                  placeholder="Confirm password"
+                  type="password"
+                  customStyle={customStyle}
+                  inputIcon={lockIcon}
+                  value={error ? "" : confirmPassword}
+                  onChange={handleConfirmPasswordChange}
                 />
               )}
             </div>
