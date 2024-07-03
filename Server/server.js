@@ -8,7 +8,7 @@ const taskRoutes = require('./routes/taskRoutes.js');
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: `${process.env.FRONTEND_URL}`,
+    origin: process.env.FRONTEND_URL,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 }));
 app.use("/auth/v1", authRoutes);
