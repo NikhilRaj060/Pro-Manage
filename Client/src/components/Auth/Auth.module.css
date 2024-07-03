@@ -23,12 +23,12 @@
 }
 
 .circle_motion {
+    height: 300px;
+    width: 300px;
     z-index: 1;
     left: 51%;
     top: 18%;
     transform: translate(-50%, 0);
-    height: 40%;
-    width: 35%;
     position: absolute;
     border-radius: 50%;
     background: #268D9D;
