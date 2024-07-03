@@ -68,7 +68,7 @@ const Sidebar = React.memo(() => {
       <div className={styles.footer} onClick={handleLogout}>
 
         <div className={styles.logoutButton}>
-        <img className={styles.image} src={`../../Image/logout.svg`} alt="logout" />
+        <img className={styles.image} src={`../../image/logout.svg`} alt="logout" />
         Log out
         </div>
       </div>
