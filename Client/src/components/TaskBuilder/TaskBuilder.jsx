@@ -210,7 +210,8 @@ function TaskBuilder() {
     return true;
   };
 
-  const canEditAssignee = currentUserId === initialFormData.createdBy;
+  const canEditAssignee = isEditPermission && currentUserId === initialFormData.createdBy;
+  console.log(canEditAssignee)
   
   return (
     <div className={styles.main}>
@@ -260,7 +261,7 @@ function TaskBuilder() {
               hasImage
               selectedId={formData?.assigned?._id}
               onSelect={handleSelect}
-              isReadOnly={!canEditAssignee}
+              isReadOnly={!canEditAssignee && isEditPermission}
             />
           </div>
         </div>

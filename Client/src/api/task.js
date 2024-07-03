@@ -125,10 +125,10 @@ const createTask = async (formData) => {
   }
 };
 
-const updateTaskType = async (taskId, newType) => {
+const updateTaskType = async (taskId, newData , updateType) => {
   try {
-    const reqUrl = `${backendUrl}/tasks/${taskId}/type`;
-    const response = await axios.patch(reqUrl, { type: newType });
+    const reqUrl = `${backendUrl}/tasks/${taskId}/${updateType}`;
+    const response = await axios.patch(reqUrl, { data: newData });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -162,9 +162,9 @@ const updateTaskType = async (taskId, newType) => {
   }
 };
 
-const getQuizDetailsById = async (quizId) => {
+const getTaskDetailsById = async (taskId) => {
   try {
-    const reqUrl = `${backendUrl}/get-quiz/${quizId}`;
+    const reqUrl = `${backendUrl}/get-task/${taskId}`;
     const response = await axios.get(reqUrl);
     return response.data;
   } catch (error) {
@@ -240,44 +240,6 @@ const editTaskDetailsById = async (taskId, task) => {
   }
 };
 
-const updateQuizDetailsById = async (quizId, quiz) => {
-  try {
-    const reqUrl = `${backendUrl}/update-quiz/${quizId}`;
-    const response = await axios.put(reqUrl, quiz);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    if (error.response && error.response.data) {
-      toast.error(error.response.data.errorMessage || "Something went wrong", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-        className: "custom_toast",
-      });
-    } else {
-      toast.error("Something went wrong", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-        className: "custom_color"
-      }
-      );
-    }
-  }
-};
-
 const deleteTask = async (taskId) => {
   try {
     const reqUrl = `${backendUrl}/delete-task/${taskId}`;
@@ -304,4 +266,4 @@ const deleteTask = async (taskId) => {
   }
 }
 
-export { createTask, getQuizDetailsById, editTaskDetailsById, getAllTaskAnalytics, getAllTaskDataOverView, updateQuizDetailsById, deleteTask ,updateTaskType };
+export { createTask, getTaskDetailsById, editTaskDetailsById, getAllTaskAnalytics, getAllTaskDataOverView, deleteTask ,updateTaskType };

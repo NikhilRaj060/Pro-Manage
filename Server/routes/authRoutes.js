@@ -8,5 +8,6 @@ router.post("/register",authController.registerUser)
 router.post("/login",authController.loginUser)
 router.post("/add-temp-user",authController.addTempUser)
 router.get("/get-all-temp-user", verifyToken , authController.getAllTempUser)
+router.put("/update-user", verifyToken, authController.updateUser);
 
 module.exports = router;

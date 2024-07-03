@@ -15,6 +15,8 @@ import Fade from "@mui/material/Fade";
 import { Modal, Box } from "@mui/material";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import Tooltip from "@mui/material/Tooltip";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+
 
 function Card({ collapseAll, task, onLoadingChange }) {
   const conirmationModalStyle = {
@@ -87,18 +89,28 @@ function Card({ collapseAll, task, onLoadingChange }) {
     setCompletedCount(count);
   }, [task]);
 
-  const handleTaskCompletionChange = (taskId, completed) => {
+  const handleTaskCompletionChange = async (taskId, completed) => {
     const updatedTasks = task?.tasks?.map((t) =>
       t._id === taskId ? { ...t, completed: !completed } : t
     );
     task.tasks = updatedTasks;
     setCompletedCount(updatedTasks?.filter((t) => t.completed).length);
+
+    try {
+      const updatedTask = await updateTaskType(taskData._id, updatedTasks, "tasks");
+      if (updatedTask && updatedTask?.message) {
+        setTaskData(updatedTask.data);
+      }
+    } catch (error) {
+      onLoadingChange(false);
+      console.error("Error updating task type:", error);
+    }
   };
 
   const handleChipClick = async (newType) => {
     try {
       onLoadingChange(true);
-      const updatedTask = await updateTaskType(taskData._id, newType);
+      const updatedTask = await updateTaskType(taskData._id, newType, "type");
       if (updatedTask && updatedTask?.message) {
         createTaskSuccess();
         setTaskData(updatedTask.data);
@@ -158,11 +170,33 @@ function Card({ collapseAll, task, onLoadingChange }) {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.priority_container}>
-          <div
-            style={{ background: task?.priority?.color }}
-            className={styles.priority_circle}
-          ></div>
+          <div style={{ background: task?.priority?.color }} className={styles.priority_circle} ></div>
           <div className={styles.priority}>{task?.priority?.title}</div>
+          <Tooltip
+            title={task?.assignedEmail}
+            placement="bottom"
+            style={{ cursor: "pointer" }}
+            slotProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -8],
+                    },
+                  },
+                ],
+              },
+            }}
+          >
+            {
+              task?.assignedEmail &&
+              <div loading="lazy" className={styles.initials}>
+                {(task?.assignedEmail[0] + task?.assignedEmail[1])?.toUpperCase()}
+              </div>
+            }
+          </Tooltip>
+
         </div>
         <div className={styles.icon_container}>
           <FaEllipsis
@@ -189,7 +223,15 @@ function Card({ collapseAll, task, onLoadingChange }) {
             }}
           >
             <MenuItem onClick={handleEdit}>Edit</MenuItem>
-            <MenuItem onClick={handleShare}>Share</MenuItem>
+            <MenuItem>
+              <CopyToClipboard
+                className={styles.shareBtn}
+                text={task?.taskLink}
+                onCopy={handleShare}
+              >
+                <div>Share</div>
+              </CopyToClipboard>
+            </MenuItem>
             <MenuItem style={{ color: "#CF3636" }} onClick={handleDelete}>
               Delete
             </MenuItem>
@@ -259,8 +301,8 @@ function Card({ collapseAll, task, onLoadingChange }) {
                 task?.type === "COMPLETED"
                   ? "#63C05B"
                   : task?.type !== "COMPLETED" && dueDatePassed
-                  ? "#CF3636"
-                  : ""
+                    ? "#CF3636"
+                    : ""
               }
               label={formatDate(task.dueDate)}
               size="small"
@@ -272,6 +314,7 @@ function Card({ collapseAll, task, onLoadingChange }) {
             ?.filter((card) => card?.type !== task.type)
             ?.map((filteredCard) => (
               <Chip
+                key={filteredCard?.type}
                 label={filteredCard?.short}
                 size="small"
                 onClick={() => handleChipClick(filteredCard?.type)}

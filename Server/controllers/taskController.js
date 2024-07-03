@@ -57,19 +57,19 @@ const createTask = async (req, res, next) => {
 
 const editTask = async (req, res, next) => {
   try {
-    let userId = req?.currentUserId;
     const { taskId } = req.params;
+    console.log(taskId)
     const { title, assigned, priority, tasks, type, dueDate , createdBy , assignedEmail } = req.body;
     const isValid = validatingEachField({ res, title, type, priority, tasks });
     if (!isValid) return;
-    let task = await TaskModel.findOne({ taskId, userId });
+    let task = await TaskModel.findOne({ taskId });
     if (!task) {
       return res.status(404).json({
         error: "Validation failed",
         message: "No task found with the given taskId",
       });
     }
-    task.userId = userId;
+    task.userId = task.userId;
     task.title = title;
     task.assigned = assigned;
     task.priority = priority;
@@ -286,10 +286,11 @@ const deleteTask = async (req, res, next) => {
   }
 };
 
-const updateTaskType = async (req, res, next) => {
+const updateTask = async (req, res, next) => {
   try {
     const taskId = req.params.id;
-    const { type } = req.body;
+    const updateType = req.params.updateType
+    const { data } = req.body;
 
     const task = await TaskModel.findById(taskId);
 
@@ -297,7 +298,7 @@ const updateTaskType = async (req, res, next) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    task.type = type;
+    task[updateType] = data;
     await task.save();
 
     return res
@@ -308,8 +309,34 @@ const updateTaskType = async (req, res, next) => {
   }
 };
 
+const getTaskById = async (req, res, next) => {
+  try {
+    const { taskId } = req.params;
+
+    if (!taskId) {
+      return res
+        .status(400)
+        .json({ error: "Validation failed", message: "Invalid taskId" });
+    }
+
+    let task = await TaskModel.findOne({ taskId });
+
+    if (!task) {
+      return res.status(404).json({
+        error: "Validation failed",
+        message: "No task found with given taskId",
+      });
+    }
+
+    await task.save();
+
+    return res.status(200).json({ task });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const validatingEachField = ({ res, title, type, priority, tasks }) => {
-  // Validating each required field individually
   if (!title) {
     res.status(400).json({
       error: "Validation failed",
@@ -378,7 +405,6 @@ const validatingEachField = ({ res, title, type, priority, tasks }) => {
     }
   }
 
-  // All validations passed
   return true;
 };
 
@@ -387,6 +413,7 @@ module.exports = {
   editTask,
   getAllTaskAnalytics,
   getAllTaskDataOverview,
-  updateTaskType,
+  updateTask,
+  getTaskById,
   deleteTask,
 };

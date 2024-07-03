@@ -1,185 +1,133 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // Assuming you are using React Router
 import styles from "./Task.module.css";
-import { useParams, useNavigate } from "react-router-dom";
-import { getQuizDetailsById, updateQuizDetailsById } from "../../api/task";
-import TaskBody from "./TaskBody/TaskBody";
-import Skeleton from "@mui/material/Skeleton";
+import Chip from "../Chip/Chip";
+import Checkbox from "@mui/material/Checkbox";
+import useFormattedDate from "../../Hook/useFormattedDate";
+import Tooltip from "@mui/material/Tooltip";
+import { getTaskDetailsById } from "../../api/task";
+import image from "../../Image/codesandbox.svg";
 
-const Quiz = () => {
-  const { quizId } = useParams();
-  const [quiz, setQuiz] = useState({});
-  const [qIndex, setQIndex] = useState(0);
-  const [selectedOptionIndices, setSelectedOptionIndices] = useState(
-    Array(quiz?.questions?.length).fill(null)
-  );
-  let score = 0;
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [timer, setTimer] = useState(0);
-  let isLoading = true;
-  let initialTimer = quiz?.timer;
-  const navigate = useNavigate();
-  const skeletonsOverview = Array.from({ length: 4 });
+function Task() {
+  const formatDate = useFormattedDate();
+  const [task, setTask] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
+  const { taskId } = useParams();
 
   useEffect(() => {
-    const fetchQuizDetails = async () => {
-      if (!quizId) return;
-      try {
-        const result = await getQuizDetails(quizId);
-        if (result) {
-          isLoading = false;
-        }
-        setQuiz(result?.quiz || {});
-        setTimer(result?.quiz?.timer || 0);
-      } catch (error) {
-        console.error("Error fetching quiz details:", error);
-      }
-    };
-    fetchQuizDetails();
-  }, [quizId]);
-
-  useEffect(() => {
-    if (initialTimer > 0 && timer > 0 && !isSubmitted) {
-      const timerInterval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-
-      return () => {
-        clearInterval(timerInterval);
-      };
+    if (taskId) {
+      fetchTaskById(taskId);
     }
-  }, [timer, isSubmitted]);
+  }, [taskId]);
 
-  useEffect(() => {
-    if (initialTimer > 0 && timer === 0 && qIndex < quiz?.questions?.length && !isSubmitted) {
-      handleNext();
-    }
-  }, [timer, qIndex, quiz, isSubmitted]);
-
-  useEffect(() => {
-    if (initialTimer > 0) {
-      setTimer(quiz?.timer || 0);
-    }
-  }, [qIndex, quiz]);
-  const formattedTimer = `${Math.floor(timer / 60)
-    .toString()
-    .padStart(2, "0")}:${(timer % 60).toString().padStart(2, "0")}`;
-
-  const getQuizDetails = async (id) => {
+  const fetchTaskById = async (taskId) => {
     try {
-      const result = await getQuizDetailsById(id);
-      return result;
-    } catch (error) {
-      console.error("Error fetching quiz details:", error);
-      throw error;
-    }
-  };
-
-  const handleNext = () => {
-    if (qIndex < quiz?.questions?.length - 1) {
-      setQIndex(qIndex + 1);
-      setTimer(quiz?.timer)
-    } else {
-      handleSubmit();
-      updateQuizDetails();
-    }
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 10000)
-  };
-
-  const updateQuizDetails = async () => {
-    try {
-      const resp = await updateQuizDetailsById(quizId, quiz);
-      if (resp.message) {
-        setIsSubmitted(false);
-        navigate(`/quiz/result/${quizId}`, {
-          state: {
-            score,
-            total: quiz?.questions?.length,
-            quiz_type: quiz?.quiz_type
-          },
-        });
+      const data = await getTaskDetailsById(taskId);
+      if (data) {
+        setTask(data?.task);
       }
     } catch (error) {
-      console.error("Error updating quiz details:", error);
+      console.error("Error fetching task details:", error);
     }
   };
 
-  const handleSelectedOptionIndicesData = (data) => {
-    setSelectedOptionIndices(data);
-  };
-
-  const handleSubmit = () => {
-    setIsSubmitted(true);
-    quiz.questions.forEach((element, index) => {
-      if (selectedOptionIndices[index] != null) {
-        element.attempted += 1;
-      }
-      if (element?.correctAnswerIndex === selectedOptionIndices[index]) {
-        score += 1
-        element.peopleAttemptedCorrectAnswer += 1;
+  useEffect(() => {
+    let count = 0;
+    task?.tasks?.forEach((task) => {
+      if (task?.completed) {
+        count++;
       }
     });
+    setCompletedCount(count);
+  }, [task]);
+
+  const truncateText = (text, maxLength) => {
+    if (text?.length <= maxLength) {
+      return text;
+    }
+    return text?.slice(0, maxLength) + "...";
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.main}>
-        <div className={styles.quizHeader}>
-          <div className={styles.question_count}>
-            <span
-              className={`${styles.question_count_text} ${styles.common_class}`}
-            >
-              {quiz?.questions
-                ? `${String(qIndex + 1).padStart(2, "0")} / ${String(
-                  quiz.questions.length
-                ).padStart(2, "0")}`
-                :
-                <Skeleton
-                  variant="rounded"
-                  width={100}
-                  height={50}
-                />
-              }
-            </span>
+    <div className={styles.main}>
+      <div className={styles.headerContainer}>
+        <img className={styles.image} src={image} alt="pro manage" />
+        <div className={styles.image_header}>Pro Manage</div>
+      </div>
+      <div className={styles.container}>
+        <div className={styles.body}>
+          <div className={styles.header}>
+            <div className={styles.priority_container}>
+              <div
+                style={{ background: task?.priority?.color }}
+                className={styles.priority_circle}
+              ></div>
+              <div className={styles.priority}>{task?.priority?.title}</div>  
+            </div>
           </div>
-          <div className={`${styles.timer} ${styles.common_class}`}>
-            {initialTimer ? (initialTimer > 0 && `${formattedTimer}s`) :
-              <Skeleton
-                variant="rounded"
-                width={100}
-                height={50}
-              />}
+          <Tooltip
+            title={task?.title}
+            placement="bottom"
+            slotProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -8],
+                    },
+                  },
+                ],
+              },
+            }}
+          >
+            <div className={styles.title}>{truncateText(task?.title, 35)}</div>
+          </Tooltip>
+          <div className={styles.task_list_conainer}>
+            <div className={styles.check_list_conainer}>
+              <div className={styles.check_list}>
+                Checklist ({completedCount}/{task?.tasks?.length})
+              </div>
+            </div>
+            <div className={styles.tasks}>
+              {task?.tasks?.map((data) => (
+                <div className={styles.task} key={data?._id}>
+                  <Checkbox
+                    checked={data?.completed}
+                    style={{
+                      borderRadius: "6px",
+                      padding: "0",
+                      paddingRight: "5px",
+                    }}
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        fill: data?.completed ? "#17A2B8" : "#E2E2E2",
+                        fontSize: 25,
+                      },
+                    }}
+                    disabled={true}
+                    required />
+                  <div className={styles.task_title}>{data?.title}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        {quiz?.questions && quiz?.questions?.length > 0 ? (
-          <TaskBody
-            data={quiz}
-            qIndex={qIndex}
-            handleSelectedOptionIndicesData={handleSelectedOptionIndicesData}
-          />
-        ) : (
-          <div className={styles.skeletons}>
-            {skeletonsOverview?.map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rounded"
-                className={styles.skeleton}
-                height={100}
-              />
-            ))}
+          <div className={styles.chip_container}>
+            <div className={styles.due_date}>
+              { task?.dueDate && "Due Date" }
+              <div className={styles.chip}>{task?.dueDate && (
+                <Chip
+                  style={{ marginLeft: "10px" }}
+                  backgroundColor={"#CF3636"}
+                  label={formatDate(task?.dueDate)}
+                  size="small" />
+              )}</div>
+            </div>
           </div>
-        )}
-        <div className={isSubmitted ? ` ${styles.disabled} ${styles.quiz_button}` : `${styles.quiz_button}`} onClick={handleNext}>
-          {quiz?.questions?.length === qIndex + 1
-            ? isSubmitted
-              ? "SUBMITTING..."
-              : "SUBMIT"
-            : "NEXT"}
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default Quiz;
+export default Task;

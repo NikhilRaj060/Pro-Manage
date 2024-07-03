@@ -29,7 +29,8 @@
     padding-right: 1rem;
     background-color: #FFF;
     color: #FFFFFF;
-    border: 1px solid #E2E2E2
+    border: 1px solid #E2E2E2;
+    cursor: pointer;
 }
 
 .title_name {
@@ -51,10 +52,6 @@
     align-items: center;
     padding: .5rem;
 }
-
-/* .list_item:hover {
-    background-color: #e5e7eb;
-} */
 
 .user_info {
     display: flex;

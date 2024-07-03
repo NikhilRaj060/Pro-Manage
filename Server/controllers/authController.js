@@ -4,10 +4,11 @@ const bycrpt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    let { name, email, password, confirmPassword } = req.body;
     if ((!email || !name || !password, !confirmPassword)) {
       return res.status(400).json({ errorMessage: "Bad Request" });
     }
+    email = email?.toLowerCase();
     const isExistingUser = await UserModel.findOne({ email });
     if (confirmPassword !== password) {
       return res
@@ -40,10 +41,11 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ errorMessage: "Bad Request" });
     }
+    email = email?.toLowerCase()
     let userDetails = await UserModel.findOne({ email });
     if (!userDetails) {
       return res
@@ -107,5 +109,50 @@ const getAllTempUser = async (req, res, next) => {
   }
 };
 
+const updateUser = async (req, res, next) => {
+  try {
+    const { email, name, oldPassword, newPassword } = req.body;
+    const userId = req?.currentUserId;
 
-module.exports = { registerUser, loginUser, addTempUser , getAllTempUser };
+    if (!userId) {
+      return res.status(400).json({ errorMessage: "Invalid user ID" });
+    }
+
+    let user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: "User not found" });
+    }
+
+    if (email) {
+      const isEmailTaken = await UserModel.findOne({ email });
+      if (isEmailTaken && isEmailTaken.id !== userId) {
+        return res.status(400).json({ errorMessage: "Email is already taken" });
+      }
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (oldPassword && newPassword) {
+      const isOldPasswordCorrect = await bycrpt.compare(oldPassword, user.password);
+      if (!isOldPasswordCorrect) {
+        return res.status(400).json({ errorMessage: "Old password is incorrect" });
+      }
+      if (newPassword === user.password) {
+        return res.status(400).json({ errorMessage: "New password and old password can not be same" });
+      }
+      user.password = await bycrpt.hash(newPassword, 10);
+    }
+
+    await user.save();
+    res.json({ message: "User updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+module.exports = { registerUser, loginUser, addTempUser , getAllTempUser , updateUser };

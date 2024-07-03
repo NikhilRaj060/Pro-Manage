@@ -161,3 +161,46 @@ export const getAllTempUser = async () => {
     }
   }
 };
+
+export const updateUser = async ({ email, name, oldPassword, newPassword }, setIsAuthentication) => {
+  try {
+    const reqUrl = `http://localhost:3001/auth/v1/update-user`;
+    const token = localStorage.getItem("token");
+    const response = await toast.promise(
+      axios.put(reqUrl, { email, name, oldPassword, newPassword }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }),
+      {
+        pending: "Updating user...",
+        success: {
+          render({ data }) {
+            return `${data?.data?.message || "Success!"}`;
+          },
+        },
+        error: {
+          render({ data }) {
+            return `${data?.response?.data?.errorMessage || "Something went wrong"}`;
+          },
+        },
+      },
+      {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        className: "custom_toast",
+      }
+    );
+    return response;
+  } catch (error) {
+    setIsAuthentication(false);
+    console.log(error);
+  }
+};

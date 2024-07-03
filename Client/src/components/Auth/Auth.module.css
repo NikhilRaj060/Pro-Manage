@@ -6,6 +6,7 @@
 }
 
 .image_container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,10 +24,11 @@
 
 .circle_motion {
     z-index: 1;
-    left: 20%;
+    left: 51%;
     top: 18%;
+    transform: translate(-50%, 0);
     height: 40%;
-    width: 21%;
+    width: 35%;
     position: absolute;
     border-radius: 50%;
     background: #268D9D;

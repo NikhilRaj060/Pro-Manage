@@ -75,6 +75,7 @@ span {
 
 .task_button_group {
     width: 100%;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
