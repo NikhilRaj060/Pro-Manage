@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styles from "./Analytics.module.css";
 import { getAllTaskAnalytics } from "../../api/task";
 import { prioritysData, tasksData } from "../../lib/analytics";
+import AnalyticsSkeletonLoader from "./AnalyticsSkeletonLoader";
 
 const Analytics = () => {
   const [taskData, setTaskData] = useState(tasksData);
   const [priorityData, setPriorityData] = useState(prioritysData);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllDataOverview = async () => {
@@ -29,12 +31,17 @@ const Analytics = () => {
         }
       } catch (error) {
         console.error("Error fetching task analytics:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchAllDataOverview();
   }, []);
 
+  if (isLoading) {
+    return <AnalyticsSkeletonLoader />;
+  }
 
   return (
     <div className={styles.main}>
@@ -43,7 +50,7 @@ const Analytics = () => {
         <div className={styles.analytics_container}>
           <div className={styles.task_container}>
             {taskData?.map((task) => (
-              <div className={styles.tasks} id={task.id}>
+              <div className={styles.tasks} id={task.id} key={task.id}>
                 <div className={styles.content}>
                   <div className={styles.task_circle}></div>
                   <div className={styles.task}>{task?.title}</div>
@@ -56,7 +63,7 @@ const Analytics = () => {
         <div className={styles.analytics_container}>
           <div className={styles.task_container}>
             {priorityData?.map((data) => (
-              <div className={styles.tasks} id={data.id}>
+              <div className={styles.tasks} id={data.id} key={data.id}>
                 <div className={styles.content}>
                   <div className={styles.task_circle}></div>
                   <div className={styles.task}>{data?.title}</div>

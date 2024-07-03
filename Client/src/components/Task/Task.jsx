@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // Assuming you are using React Router
+import { useParams } from "react-router-dom";
 import styles from "./Task.module.css";
 import Chip from "../Chip/Chip";
 import Checkbox from "@mui/material/Checkbox";
@@ -7,10 +7,11 @@ import useFormattedDate from "../../Hook/useFormattedDate";
 import Tooltip from "@mui/material/Tooltip";
 import { getTaskDetailsById } from "../../api/task";
 import image from "../../Image/codesandbox.svg";
+import SkeletonLoader from '../SkeletonLoader/SkeletonLoader';
 
 function Task() {
   const formatDate = useFormattedDate();
-  const [task, setTask] = useState([]);
+  const [task, setTask] = useState(null)
   const [completedCount, setCompletedCount] = useState(0);
   const { taskId } = useParams();
 
@@ -48,6 +49,11 @@ function Task() {
     return text?.slice(0, maxLength) + "...";
   };
 
+  // If task is null, show SkeletonLoader
+  if (!task) {
+    return <SkeletonLoader />;
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.headerContainer}>
@@ -62,7 +68,7 @@ function Task() {
                 style={{ background: task?.priority?.color }}
                 className={styles.priority_circle}
               ></div>
-              <div className={styles.priority}>{task?.priority?.title}</div>  
+              <div className={styles.priority}>{task?.priority?.title}</div>
             </div>
           </div>
           <Tooltip

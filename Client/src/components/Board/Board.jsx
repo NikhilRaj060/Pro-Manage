@@ -12,7 +12,7 @@ import Fade from "@mui/material/Fade";
 import { GoPeople } from "react-icons/go";
 import AddUserModal from "../AddUserModal/AddUserModal";
 import { Modal, Box } from "@mui/material";
-
+import BoardSkeletonLoader from './BoardSkeletonLoader';
 
 export default function Board() {
   const userModalStyle = {
@@ -110,6 +110,10 @@ export default function Board() {
 
   const handleAddPeople = () => {
     openAddUserModal()
+  }
+
+  if (isLoading) {
+    return <BoardSkeletonLoader />;
   }
 
   return (

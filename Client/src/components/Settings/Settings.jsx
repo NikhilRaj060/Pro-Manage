@@ -5,7 +5,7 @@ import InputButton from "../Input/InputButton";
 import { ic_mail_outline as mailIcon } from 'react-icons-kit/md/ic_mail_outline';
 import { ic_person_outline_outline as personIcon } from 'react-icons-kit/md/ic_person_outline_outline';
 import { ic_lock_outline as lockIcon } from 'react-icons-kit/md/ic_lock_outline';
-import { updateUser } from "../../api/auth"; // Assuming updateUser function is exported from your auth.js file
+import { updateUser } from "../../api/auth";
 import { toast } from "react-toastify";
 
 const Settings = () => {
