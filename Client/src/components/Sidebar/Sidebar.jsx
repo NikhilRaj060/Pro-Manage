@@ -58,7 +58,7 @@ const Sidebar = React.memo(() => {
                 }
                 onClick={() => handleClick(element)}
               >
-                <img className={styles.image} src={`/Image/${element.imgsrc}`} alt={element.imgname} />
+                <img className={styles.image} src={`/image/${element.imgsrc}`} alt={element.imgname} />
                 {element?.title}
               </div>
             </>
