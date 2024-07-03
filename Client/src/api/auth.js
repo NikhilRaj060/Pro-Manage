@@ -4,7 +4,7 @@ const backendUrl = process.env.REACT_APP_PUBLIC_URL_AUTH;
 
 export const registerUser = async ({ email, password, confirmPassword, name },setIsAuthentication) => {
   try {
-    const reqUrl = `http://localhost:3001/auth/v1/register`;
+    const reqUrl = `${backendUrl}/register`;
     const response = await toast.promise(
       axios.post(reqUrl, { name, email, password, confirmPassword }),
       {
@@ -42,7 +42,7 @@ export const registerUser = async ({ email, password, confirmPassword, name },se
 
 export const loginUser = async ({ email, password },setIsAuthentication) => {
   try {
-    const reqUrl = `http://localhost:3001/auth/v1/login`;
+    const reqUrl = `${backendUrl}/login`;
     const response = await toast.promise(
       axios.post(reqUrl, { email, password }),
       {
@@ -86,7 +86,7 @@ export const loginUser = async ({ email, password },setIsAuthentication) => {
 
 export const addTempUser = async ({ email }) => {
   try {
-    const reqUrl = `http://localhost:3001/auth/v1/add-temp-user`;
+    const reqUrl = `${backendUrl}/add-temp-user`;
     const response = await toast.promise(
       axios.post(reqUrl, { email }),
       {
@@ -164,7 +164,7 @@ export const getAllTempUser = async () => {
 
 export const updateUser = async ({ email, name, oldPassword, newPassword }, setIsAuthentication) => {
   try {
-    const reqUrl = `http://localhost:3001/auth/v1/update-user`;
+    const reqUrl = `${backendUrl}/update-user`;
     const token = localStorage.getItem("token");
     const response = await toast.promise(
       axios.put(reqUrl, { email, name, oldPassword, newPassword }, {
