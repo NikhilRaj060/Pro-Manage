@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./Auth.module.css";
 import InputButton from "../Input/InputButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import { isWeakPassword, isValidEmail, isValidName } from "../../lib/auth";
+import { isWeakPassword, isValidEmail, isValidName } from "../../model/auth";
 import { registerUser, loginUser } from "../../api/auth";
 import image from "../../Image/art.svg";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -119,7 +119,7 @@ export default function Auth() {
         }
       } catch (error) {
         setIsAuthentication(false);
-        console.log(error);
+        console.error(error);
       }
     } else {
       if (validName && validEmail && !weakPassword && passwordsMatch) {
@@ -143,7 +143,7 @@ export default function Auth() {
           }
         } catch (error) {
           setIsAuthentication(false);
-          console.log(error);
+          console.error(error);
         }
       }
     }
@@ -162,7 +162,7 @@ export default function Auth() {
     <div className={styles.main}>
       <div className={styles.image_container}>
         <div className={styles.container}>
-          <img className={styles.image} src={image} alt="image" />
+          <img className={styles.image} src={image} alt="svg-image" />
           <div className={styles.circle_motion}></div>
         </div>
         <div className={styles.text_container}>

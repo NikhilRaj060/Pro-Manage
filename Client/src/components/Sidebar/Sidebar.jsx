@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { sideBarMenu } from "../../lib/sideBarMenu";
+import { sideBarMenu } from "../../model/sideBarMenu";
 import image from "../../Image/codesandbox.svg";
 import { useModal } from "../../Hook/ModalContext";
 import { Modal, Box } from "@mui/material";

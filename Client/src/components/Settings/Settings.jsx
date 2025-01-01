@@ -86,7 +86,7 @@ const Settings = () => {
       }
     } catch (error) {
       toast.error("Update failed. Please try again.");
-      console.log(error);
+      console.error(error);
     } finally {
       setIsAuthentication(false);
     }

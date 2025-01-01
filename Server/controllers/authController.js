@@ -42,6 +42,7 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     let { email, password } = req.body;
+    console.log(req.body,"req.body")
     if (!email || !password) {
       return res.status(400).json({ errorMessage: "Bad Request" });
     }

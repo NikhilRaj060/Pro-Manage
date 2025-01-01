@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Analytics.module.css";
 import { getAllTaskAnalytics } from "../../api/task";
-import { prioritysData, tasksData } from "../../lib/analytics";
+import { prioritysData, tasksData } from "../../model/analytics";
 import AnalyticsSkeletonLoader from "./AnalyticsSkeletonLoader";
 
 const Analytics = () => {

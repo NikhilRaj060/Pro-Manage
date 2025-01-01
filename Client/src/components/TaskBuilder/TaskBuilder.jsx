@@ -5,7 +5,7 @@ import { useModal } from "../../Hook/ModalContext.jsx";
 import { createTask, editTaskDetailsById } from "../../api/task.js";
 import { getAllTempUser } from "../../api/auth.js";
 import InputButton from "../Input/InputButton.jsx";
-import { chipList } from "../../lib/chipList.js";
+import { chipList } from "../../model/chipList.js";
 import Chip from "../Chip/Chip.jsx";
 import Tasks from "./Tasks/Tasks.jsx";
 import Dropdown from "../Dropdown/Dropdown.jsx";
@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { Box } from "@mui/material";
-import CustomToolbar from "../CustomToolBar/CustomToolBar.jsx";
+import CustomToolbar from "../../lib/CustomToolBar/CustomToolBar.jsx";
 import { decodeToken } from "react-jwt"
 
 function TaskBuilder() {
@@ -211,7 +211,7 @@ function TaskBuilder() {
   };
 
   const canEditAssignee = isEditPermission && currentUserId === initialFormData.createdBy;
-  console.log(canEditAssignee)
+  console.error(canEditAssignee)
   
   return (
     <div className={styles.main}>

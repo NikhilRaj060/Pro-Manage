@@ -36,7 +36,7 @@ export const registerUser = async ({ email, password, confirmPassword, name },se
     return response;
   } catch (error) {
     setIsAuthentication(false);
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -78,7 +78,7 @@ export const loginUser = async ({ email, password },setIsAuthentication) => {
     return true;
   } catch (error) {
     setIsAuthentication(false);
-    console.log(error);
+    console.error(error);
     return false;
   }
 };
@@ -117,7 +117,7 @@ export const addTempUser = async ({ email }) => {
     );
     return response;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -131,7 +131,7 @@ export const getAllTempUser = async () => {
     const response = await axios.get(reqUrl, { headers });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
@@ -201,6 +201,6 @@ export const updateUser = async ({ email, name, oldPassword, newPassword }, setI
     return response;
   } catch (error) {
     setIsAuthentication(false);
-    console.log(error);
+    console.error(error);
   }
 };

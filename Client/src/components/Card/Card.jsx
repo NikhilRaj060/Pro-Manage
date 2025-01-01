@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Card.module.css";
 import { FaEllipsis, FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Chip from "../Chip/Chip";
-import { cardMenu } from "../../lib/cardMenu";
+import { cardMenu } from "../../model/cardMenu.js";
 import Checkbox from "@mui/material/Checkbox";
 import useFormattedDate from "../../Hook/useFormattedDate";
 import dayjs from "dayjs";

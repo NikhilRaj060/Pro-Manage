@@ -12,7 +12,7 @@ const getAllTaskAnalytics = async () => {
     const response = await axios.get(reqUrl, { headers });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
@@ -53,7 +53,7 @@ const getAllTaskDataOverView = async (filter) => {
     const response = await axios.get(reqUrl, { headers });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
@@ -94,7 +94,7 @@ const createTask = async (formData) => {
     const response = await axios.post(reqUrl, formData, { headers });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
@@ -131,7 +131,7 @@ const updateTaskType = async (taskId, newData , updateType) => {
     const response = await axios.patch(reqUrl, { data: newData });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
@@ -168,7 +168,7 @@ const getTaskDetailsById = async (taskId) => {
     const response = await axios.get(reqUrl);
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.errorMessage || "Something went wrong", {
         position: "top-center",
@@ -209,7 +209,7 @@ const editTaskDetailsById = async (taskId, task) => {
     const response = await axios.put(reqUrl, task, { headers });
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error.response && error.response.data) {
       toast.error(error.response.data.errorMessage || "Something went wrong", {
         position: "top-center",

@@ -4,7 +4,7 @@ import { getAllTaskDataOverView } from "../../api/task";
 import { useModal } from "../../Hook/ModalContext";
 import useFormattedDate from "../../Hook/useFormattedDate";
 import CardBoard from "../CardBoard/CardBoard";
-import { cardMenu } from "../../lib/cardMenu";
+import { cardMenu } from "../../model/cardMenu";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,7 +12,8 @@ import Fade from "@mui/material/Fade";
 import { GoPeople } from "react-icons/go";
 import AddUserModal from "../AddUserModal/AddUserModal";
 import { Modal, Box } from "@mui/material";
-import BoardSkeletonLoader from './BoardSkeletonLoader';
+import BoardSkeletonLoader from "./BoardSkeletonLoader";
+import { DateFilterType } from "../../model/taskEnum";
 
 export default function Board() {
   const userModalStyle = {
@@ -31,10 +32,19 @@ export default function Board() {
   const [taskData, setTaskData] = useState([]);
   const [name] = useState(localStorage.getItem("name"));
   const [isLoading, setIsLoading] = useState(true);
-  const { taskCreated, resetTaskCreated , isAddUserModalOpen, closeAddUserModal , openAddUserModal } = useModal();
+  const {
+    taskCreated,
+    resetTaskCreated,
+    isAddUserModalOpen,
+    closeAddUserModal,
+    openAddUserModal,
+  } = useModal();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [filter, setFilter] = useState("This Week");
+  const [filter, setFilter] = useState({
+    id: "week",
+    value: "This Week",
+  });
 
   let date = new Date();
   const handleClick = (event) => {
@@ -46,7 +56,7 @@ export default function Board() {
   };
 
   const fetchAllDataOverview = async (filter) => {
-    const data = await getAllTaskDataOverView(filter);
+    const data = await getAllTaskDataOverView(filter?.id);
     if (data) {
       setIsLoading(false);
     }
@@ -72,7 +82,7 @@ export default function Board() {
 
   useEffect(() => {
     if (taskCreated) {
-      setIsLoading(true)
+      setIsLoading(true);
       fetchData(filter);
       resetTaskCreated();
     }
@@ -84,7 +94,7 @@ export default function Board() {
     return () => {
       clearTimeout(dataTimer);
     };
-  }, [taskCreated, filter]);
+  }, [resetTaskCreated , taskCreated, filter]);
 
   const fetchData = async (filter) => {
     try {
@@ -105,8 +115,8 @@ export default function Board() {
   };
 
   const handleAddPeople = () => {
-    openAddUserModal()
-  }
+    openAddUserModal();
+  };
 
   if (isLoading) {
     return <BoardSkeletonLoader />;
@@ -127,7 +137,7 @@ export default function Board() {
             </div>
           </div>
           <div className={styles.date_filter} onClick={handleClick}>
-            {filter}
+            {filter?.value}
             {isOpen ? (
               <FaAngleDown
                 className={styles.icon}
@@ -155,13 +165,16 @@ export default function Board() {
               sx={{
                 "& .MuiPaper-root": {
                   borderRadius: "10px",
-                  width: "10%",
+                  width: "50%",
                 },
               }}
             >
-              <MenuItem onClick={() => handleFilter("This Week")}>This Week</MenuItem>
-              <MenuItem onClick={() => handleFilter("Today")}>Today</MenuItem>
-              <MenuItem onClick={() => handleFilter("This Month")}>This Month</MenuItem>
+              {Object.entries(DateFilterType)?.map(([key, value]) => (
+                <MenuItem key={key} onClick={() => handleFilter(value)}>
+                  {value.value}
+                </MenuItem>
+              ))}
+              {/* <CutomeDateRangePicker /> */}
             </Menu>
           </div>
         </div>

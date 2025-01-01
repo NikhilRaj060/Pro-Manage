@@ -25,9 +25,9 @@ const BoardSkeletonLoader = () => {
         </div>
       </div>
       <div className={styles.board_conatiner}>
-        {Array.from(new Array(3)).map((_, index) => (
+        {Array.from(new Array(4)).map((_, index) => (
           <div key={index} className={styles.cardBoard}>
-            <Skeleton variant="rectangular" width={300} height={500} />
+            <Skeleton variant="rectangular" width={350} height={750} />
           </div>
         ))}
       </div>

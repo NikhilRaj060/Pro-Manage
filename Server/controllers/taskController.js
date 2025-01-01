@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const TaskModel = require("../models/task");
 const UserModel = require("../models/user");
+const { DateFilterType } = require("../enums/taskEnum");
 
 const createTask = async (req, res, next) => {
   try {
@@ -53,13 +54,19 @@ const createTask = async (req, res, next) => {
   }
 };
 
-
-
 const editTask = async (req, res, next) => {
   try {
     const { taskId } = req.params;
-    console.log(taskId)
-    const { title, assigned, priority, tasks, type, dueDate , createdBy , assignedEmail } = req.body;
+    const {
+      title,
+      assigned,
+      priority,
+      tasks,
+      type,
+      dueDate,
+      createdBy,
+      assignedEmail,
+    } = req.body;
     const isValid = validatingEachField({ res, title, type, priority, tasks });
     if (!isValid) return;
     let task = await TaskModel.findOne({ taskId });
@@ -76,8 +83,8 @@ const editTask = async (req, res, next) => {
     task.tasks = tasks;
     task.type = type;
     task.dueDate = dueDate;
-    task.createdBy = createdBy
-    task.assignedEmail = assignedEmail
+    task.createdBy = createdBy;
+    task.assignedEmail = assignedEmail;
     await task.save();
     return res.status(200).json({ message: "Task updated successfully" });
   } catch (error) {
@@ -111,48 +118,63 @@ const getAllTaskDataOverview = async (req, res, next) => {
     const currentDate = new Date();
 
     switch (filter) {
-      case "Today":
+      case DateFilterType.TODAY:
         dateFilter = {
-          $gte: new Date(currentDate.setHours(0, 0, 0, 0)),
-          $lt: new Date(currentDate.setHours(23, 59, 59, 999)),
+          $gte: new Date(currentDate).setHours(0, 0, 0, 0),
+          $lt: new Date(currentDate).setHours(23, 59, 59, 999),
         };
         break;
-      case "This Week":
-        const startOfWeek = new Date(
-          currentDate.setDate(currentDate.getDate() - currentDate.getDay())
-        );
+      case DateFilterType.WEEK:
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+    
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+    
         dateFilter = {
-          $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
-          $lt: new Date(
-            currentDate.setDate(currentDate.getDate() + 6)
-          ).setHours(23, 59, 59, 999),
+          $gte: startOfWeek,
+          $lt: endOfWeek,
         };
         break;
-      case "This Month":
-        const startOfMonth = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          1
-        );
-        const endOfMonth = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth() + 1,
-          0
-        );
+      case DateFilterType.MONTH:
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        endOfMonth.setHours(23, 59, 59, 999);
+    
         dateFilter = {
           $gte: startOfMonth,
-          $lt: new Date(endOfMonth.setHours(23, 59, 59, 999)),
+          $lt: endOfMonth,
+        };
+        break;
+      case DateFilterType.YEAR:
+        const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        const endOfYear = new Date(currentDate.getFullYear() + 1, 0, 0);
+        endOfYear.setHours(23, 59, 59, 999);
+    
+        dateFilter = {
+          $gte: startOfYear,
+          $lt: endOfYear,
+        };
+        break;
+      case DateFilterType.CUSTOM:
+        const { startDate, endDate } = req.body; // Assuming custom dates are provided
+        if (!startDate || !endDate) {
+          throw new Error("Start and End date are required for CUSTOM filter");
+        }
+    
+        dateFilter = {
+          $gte: new Date(startDate),
+          $lt: new Date(endDate),
         };
         break;
       default:
-        break;
+        throw new Error("Invalid DateFilterType");
     }
 
     const query = {
-      $or: [
-        { userId },
-        { assignedEmail }
-      ],
+      $or: [{ userId }, { assignedEmail }],
       ...(filter && { createdAt: dateFilter }),
     };
 
@@ -173,7 +195,6 @@ const getAllTaskDataOverview = async (req, res, next) => {
     next(error);
   }
 };
-
 
 const getAllTaskAnalytics = async (req, res, next) => {
   try {
@@ -269,8 +290,11 @@ const deleteTask = async (req, res, next) => {
 
     let task = await TaskModel.findOneAndDelete({ taskId, userId });
 
-    if ( userId != task?.createdBy ) {
-      return res.status(403).json({ error: "Forbidden, Sorry you can not delete this task.", message: "Unauthorized" });
+    if (userId != task?.createdBy) {
+      return res.status(403).json({
+        error: "Forbidden, Sorry you can not delete this task.",
+        message: "Unauthorized",
+      });
     }
 
     if (!task) {
@@ -289,7 +313,7 @@ const deleteTask = async (req, res, next) => {
 const updateTask = async (req, res, next) => {
   try {
     const taskId = req.params.id;
-    const updateType = req.params.updateType
+    const updateType = req.params.updateType;
     const { data } = req.body;
 
     const task = await TaskModel.findById(taskId);
