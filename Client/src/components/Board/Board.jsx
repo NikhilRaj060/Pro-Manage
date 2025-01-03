@@ -14,6 +14,7 @@ import AddUserModal from "../AddUserModal/AddUserModal";
 import { Modal, Box } from "@mui/material";
 import BoardSkeletonLoader from "./BoardSkeletonLoader";
 import { DateFilterType } from "../../model/taskEnum";
+import { Button } from "react-one-library";
 
 export default function Board() {
   const userModalStyle = {
@@ -118,6 +119,10 @@ export default function Board() {
     openAddUserModal();
   };
 
+  const handleFirstButton = () => {
+    console.log("First Library Button Clicked");
+  };
+
   if (isLoading) {
     return <BoardSkeletonLoader />;
   }
@@ -135,6 +140,7 @@ export default function Board() {
             <div className={styles.text_title_sub} onClick={handleAddPeople}>
               <GoPeople /> Add People
             </div>
+            <Button text="First Library Button" primary="true" onClick={handleFirstButton} size="xsmall"/>
           </div>
           <div className={styles.date_filter} onClick={handleClick}>
             {filter?.value}

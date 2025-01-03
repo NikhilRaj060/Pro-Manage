@@ -15,7 +15,7 @@ import Fade from "@mui/material/Fade";
 import { Modal, Box } from "@mui/material";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import Tooltip from "@mui/material/Tooltip";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+// import { CopyToClipboard } from "react-copy-to-clipboard";
 
 
 function Card({ collapseAll, task }) {
@@ -220,13 +220,13 @@ function Card({ collapseAll, task }) {
           >
             <MenuItem onClick={handleEdit}>Edit</MenuItem>
             <MenuItem>
-              <CopyToClipboard
+              {/* <CopyToClipboard
                 className={styles.shareBtn}
                 text={task?.taskLink}
                 onCopy={handleShare}
               >
                 <div>Share</div>
-              </CopyToClipboard>
+              </CopyToClipboard> */}
             </MenuItem>
             <MenuItem style={{ color: "#CF3636" }} onClick={handleDelete}>
               Delete

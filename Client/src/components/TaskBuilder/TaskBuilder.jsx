@@ -14,12 +14,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { Box } from "@mui/material";
 import CustomToolbar from "../../lib/CustomToolBar/CustomToolBar.jsx";
-import { decodeToken } from "react-jwt"
+// import { decodeToken } from "react-jwt"
 
 function TaskBuilder() {
   const token = localStorage.getItem("token");
-  const decodedToken = decodeToken(token);
-  const currentUserId = decodedToken?.userId;
+  // const decodedToken = decodeToken(token);
+  // const currentUserId = decodedToken?.userId;
   const customStyle = {
     borderRadius: "4px",
   };
@@ -210,9 +210,7 @@ function TaskBuilder() {
     return true;
   };
 
-  const canEditAssignee = isEditPermission && currentUserId === initialFormData.createdBy;
-  console.error(canEditAssignee)
-  
+  // const canEditAssignee = isEditPermission && currentUserId === initialFormData.createdBy;
   return (
     <div className={styles.main}>
       <div className={styles.conatiner}>
@@ -261,7 +259,7 @@ function TaskBuilder() {
               hasImage
               selectedId={formData?.assigned?._id}
               onSelect={handleSelect}
-              isReadOnly={!canEditAssignee && isEditPermission}
+              // isReadOnly={!canEditAssignee && isEditPermission}
             />
           </div>
         </div>

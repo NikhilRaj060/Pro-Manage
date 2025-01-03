@@ -7,14 +7,19 @@ const authRoutes = require('./routes/authRoutes.js');
 const taskRoutes = require('./routes/taskRoutes.js');
 const app = express();
 app.use(express.json());
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    // origin: process.env.FRONTEND_URL,
+    origin: '*',
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 }));
+
 app.use("/auth/v1", authRoutes);
 app.use("/api/v1", taskRoutes);
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../Client/build")));
+
 app.get("/*", (req, res) => {
     res.sendFile(path.join(__dirname, "../Client/build", "index.html"), (err) => {
         if (err) {
@@ -23,9 +28,10 @@ app.get("/*", (req, res) => {
     });
 });
 const PORT = process.env.PORT || 3002;
+
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server is running at port ${PORT}`);
+        console.error(`Server is running at port ${PORT}`);
     });
 }).catch((error) => {
     console.error("Error while server is getting up", error);
