@@ -26,9 +26,9 @@ function TaskBuilder() {
 
   const [tIndex] = useState(0);
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [priority, setPriority] = useState(null);
+  const [, setIsLoading] = useState(false);
+  const [, setTitle] = useState("");
+  const [, setPriority] = useState(null);
   const [userData, setUserData] = useState([]);
   const {
     closeTaskBuilderModal,
@@ -87,7 +87,7 @@ function TaskBuilder() {
 
     let dataTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 10000);
+    }, 500);
 
     return () => {
       clearTimeout(dataTimer);

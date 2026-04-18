@@ -77,7 +77,7 @@ function Card({ collapseAll, task }) {
     const isPassed = checkDueDate(task.dueDate);
 
     setDueDatePassed(isPassed);
-  }, []);
+  }, [task.dueDate]);
 
   useEffect(() => {
     let count = 0;
@@ -146,7 +146,7 @@ function Card({ collapseAll, task }) {
     handleClose();
   };
   const handleEdit = () => {
-    openTaskBuilderModal(taskData, true);
+    openTaskBuilderModal(true, taskData);
     handleClose();
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { sideBarMenu } from "../../model/sideBarMenu";
@@ -48,7 +48,7 @@ const Sidebar = React.memo(() => {
         </div>
         <div className={styles.sidebarMenu}>
           {sideBarMenu.map((element) => (
-            <>
+            <Fragment key={element?.id}>
               <div
                 key={element?.title}
                 className={
@@ -61,7 +61,7 @@ const Sidebar = React.memo(() => {
                 <img className={styles.image} src={`/image/${element.imgsrc}`} alt={element.imgname} />
                 {element?.title}
               </div>
-            </>
+            </Fragment>
           ))}
         </div>
       </div>

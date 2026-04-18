@@ -1,5 +1,6 @@
 const sideBarMenu = [
   {
+    id: "BOARD",
     title : "Board",
     route: "/dashboard",
     imgsrc: "layout.svg",
@@ -7,6 +8,7 @@ const sideBarMenu = [
     isActive : true
   },
   {
+    id: "ANALYTICS",
     title : "Analytics",
     route: "/analytics",
     imgsrc: "database.svg",
@@ -14,6 +16,7 @@ const sideBarMenu = [
     isActive : false
   },
   {
+    id: "SETTINGS",
     title : "Settings",
     route: "settings",
     imgsrc: "settings.svg",

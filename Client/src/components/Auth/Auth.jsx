@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./Auth.module.css";
 import InputButton from "../Input/InputButton";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -6,9 +6,7 @@ import { isWeakPassword, isValidEmail, isValidName } from "../../model/auth";
 import { registerUser, loginUser } from "../../api/auth";
 import image from "../../Image/art.svg";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ic_mail_outline as mailIcon } from "react-icons-kit/md/ic_mail_outline";
-import { ic_person_outline_outline as personIcon } from "react-icons-kit/md/ic_person_outline_outline";
-import { ic_lock_outline as lockIcon } from "react-icons-kit/md/ic_lock_outline";
+import { MdOutlineMail, MdOutlinePerson, MdOutlineLock } from "react-icons/md";
 
 export default function Auth() {
   const customStyle = {
@@ -39,49 +37,39 @@ export default function Auth() {
     setPasswordError("");
     setEmailError("");
     setNameError("");
-    setConfirmPassword("");
   };
 
   const handleNameChange = (event) => {
     setNameError("");
-    if (event && event.target) {
-      const inputValue = event.target.value;
-      setName(inputValue);
-    }
+    setName(event?.target?.value || "");
   };
 
   const handleEmailChange = (event) => {
     setEmailError("");
-    if (event && event.target) {
-      const enteredEmail = event.target.value;
-      setEmail(enteredEmail);
-    }
+    setEmail(event?.target?.value || "");
   };
 
   const handlePasswordChange = (event) => {
     setPasswordError("");
-    if (event && event.target) {
-      const enteredPassword = event.target.value;
-      setPassword(enteredPassword);
-    }
+    setPassword(event?.target?.value || "");
   };
 
   const handleConfirmPasswordChange = (event) => {
     setError("");
-    if (event && event.target) {
-      const enteredConfirmPassword = event.target.value;
-      setConfirmPassword(enteredConfirmPassword);
-    }
+    setConfirmPassword(event?.target?.value || "");
   };
 
   const handleSubmit = async () => {
     let validName = isLogin || isValidName(name);
     let validEmail;
     let weakPassword;
+
     if (isLogin) {
       if (email.trim() === "") {
         validEmail = false;
-        setEmailError(validEmail ? "" : "Please fill email address");
+        setEmailError("Please fill email address");
+      } else {
+        validEmail = true;
       }
     } else {
       validEmail = isValidEmail(email);
@@ -94,7 +82,9 @@ export default function Auth() {
     } else {
       if (password.trim() === "") {
         weakPassword = true;
-        setPasswordError(weakPassword ? "Please fill password" : "");
+        setPasswordError("Please fill password");
+      } else {
+        weakPassword = false;
       }
     }
 
@@ -111,39 +101,30 @@ export default function Auth() {
           setIsAuthentication
         );
         if (isLogginedIn) {
-          setIsAuthentication(false);
           resetForm();
           navigate("/dashboard");
-        } else {
-          setIsAuthentication(false);
         }
       } catch (error) {
-        setIsAuthentication(false);
         console.error(error);
+      } finally {
+        setIsAuthentication(false);
       }
     } else {
       if (validName && validEmail && !weakPassword && passwordsMatch) {
         try {
           setIsAuthentication(true);
           let res = await registerUser(
-            {
-              name,
-              email,
-              password,
-              confirmPassword,
-            },
+            { name, email, password, confirmPassword },
             setIsAuthentication
           );
           if (res) {
-            setIsAuthentication(false);
             resetForm();
             navigate("/auth/login");
-          } else {
-            setIsAuthentication(false);
           }
         } catch (error) {
-          setIsAuthentication(false);
           console.error(error);
+        } finally {
+          setIsAuthentication(false);
         }
       }
     }
@@ -187,7 +168,7 @@ export default function Auth() {
                   placeholder="Name"
                   type="text"
                   customStyle={customStyle}
-                  inputIcon={personIcon}
+                  inputIcon={<MdOutlinePerson size={20} />}
                   required
                   value={nameError ? "" : name}
                   error={nameError}
@@ -199,7 +180,7 @@ export default function Auth() {
                 placeholder="Email"
                 type="email"
                 customStyle={customStyle}
-                inputIcon={mailIcon}
+                inputIcon={<MdOutlineMail size={20} />}
                 value={emailError ? "" : email}
                 error={emailError}
                 onChange={handleEmailChange}
@@ -209,7 +190,7 @@ export default function Auth() {
                 placeholder="Password"
                 type="password"
                 customStyle={customStyle}
-                inputIcon={lockIcon}
+                inputIcon={<MdOutlineLock size={20} />}
                 value={passwordError ? "" : password}
                 error={passwordError}
                 onChange={handlePasswordChange}
@@ -221,7 +202,7 @@ export default function Auth() {
                   placeholder="Confirm password"
                   type="password"
                   customStyle={customStyle}
-                  inputIcon={lockIcon}
+                  inputIcon={<MdOutlineLock size={20} />}
                   value={error ? "" : confirmPassword}
                   onChange={handleConfirmPasswordChange}
                 />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./CardBoard.module.css";
 import { VscCollapseAll } from "react-icons/vsc";
 import { IoAddSharp } from "react-icons/io5";
@@ -9,7 +9,7 @@ import TaskBuilder from "../TaskBuilder/TaskBuilder";
 import Skeleton from "@mui/material/Skeleton";
 
 function CardBoard({ isLoading , data, taskData }) {
-  const [formData, setFormData] = useState(taskData);
+  const [formData] = useState(taskData);
   const {
     isTaskBuilderModalOpen,
     openTaskBuilderModal,
@@ -36,7 +36,7 @@ function CardBoard({ isLoading , data, taskData }) {
   };
 
   const handleClick = () => {
-    openTaskBuilderModal(formData, false);
+    openTaskBuilderModal(false, formData);
   };
 
   return (

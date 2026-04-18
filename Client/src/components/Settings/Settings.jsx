@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Settings.module.css";
 import InputButton from "../Input/InputButton";
-import { ic_mail_outline as mailIcon } from 'react-icons-kit/md/ic_mail_outline';
-import { ic_person_outline_outline as personIcon } from 'react-icons-kit/md/ic_person_outline_outline';
-import { ic_lock_outline as lockIcon } from 'react-icons-kit/md/ic_lock_outline';
+import { MdMailOutline, MdPersonOutline, MdLockOutline } from "react-icons/md"; 
 import { updateUser } from "../../api/auth";
 import { toast } from "react-toastify";
 
@@ -14,7 +12,6 @@ const Settings = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [nameError, setNameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isAuthentication, setIsAuthentication] = useState(false);
 
@@ -27,7 +24,6 @@ const Settings = () => {
     setNewPassword("");
     setPasswordError("");
     setEmailError("");
-    setNameError("");
   };
 
   const customStyle = {
@@ -36,35 +32,22 @@ const Settings = () => {
   };
 
   const handleNameChange = (event) => {
-    setNameError("");
-    if (event && event.target) {
-      const inputValue = event.target.value;
-      setName(inputValue);
-    }
+    setName(event.target.value);
   };
 
   const handleEmailChange = (event) => {
     setEmailError("");
-    if (event && event.target) {
-      const enteredEmail = event.target.value;
-      setEmail(enteredEmail);
-    }
+    setEmail(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
     setPasswordError("");
-    if (event && event.target) {
-      const enteredPassword = event.target.value;
-      setOldPassword(enteredPassword);
-    }
+    setOldPassword(event.target.value);
   };
 
   const handleNewPasswordChange = (event) => {
     setPasswordError("");
-    if (event && event.target) {
-      const enteredPassword = event.target.value;
-      setNewPassword(enteredPassword);
-    }
+    setNewPassword(event.target.value);
   };
 
   const handleSubmit = async () => {
@@ -75,7 +58,7 @@ const Settings = () => {
           email,
           name,
           oldPassword,
-          newPassword
+          newPassword,
         },
         setIsAuthentication
       );
@@ -101,8 +84,9 @@ const Settings = () => {
           placeholder="Name"
           type="text"
           required
-          inputIcon={personIcon}
+          inputIcon={<MdPersonOutline size={20} />} 
           customStyle={customStyle}
+          value={name}
           onChange={handleNameChange}
         />
         <InputButton
@@ -110,7 +94,7 @@ const Settings = () => {
           placeholder="Email"
           type="email"
           customStyle={customStyle}
-          inputIcon={mailIcon}
+          inputIcon={<MdMailOutline size={20} />}
           value={emailError ? "" : email}
           error={emailError}
           onChange={handleEmailChange}
@@ -119,7 +103,7 @@ const Settings = () => {
           fullWidth
           placeholder="Old Password"
           type="password"
-          inputIcon={lockIcon}
+          inputIcon={<MdLockOutline size={20} />}
           customStyle={customStyle}
           value={passwordError ? "" : oldPassword}
           error={passwordError}
@@ -129,13 +113,13 @@ const Settings = () => {
           fullWidth
           placeholder="New Password"
           type="password"
-          inputIcon={lockIcon}
+          inputIcon={<MdLockOutline size={20} />}
           customStyle={customStyle}
           value={newPassword}
           onChange={handleNewPasswordChange}
         />
         <div className={styles.authButton} onClick={handleSubmit}>
-          Update
+          {isAuthentication ? "Updating..." : "Update"}
         </div>
       </div>
     </div>

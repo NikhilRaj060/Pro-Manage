@@ -95,7 +95,7 @@ const editTask = async (req, res, next) => {
 const getAllTaskDataOverview = async (req, res, next) => {
   try {
     const userId = req.currentUserId;
-    const { filter } = req.query;
+    const { filter, page = 1, limit = 20 } = req.query;
 
     if (!userId) {
       return res.status(400).json({
@@ -118,67 +118,71 @@ const getAllTaskDataOverview = async (req, res, next) => {
     const currentDate = new Date();
 
     switch (filter) {
-      case DateFilterType.TODAY:
+      case DateFilterType.TODAY: {
         dateFilter = {
           $gte: new Date(currentDate).setHours(0, 0, 0, 0),
           $lt: new Date(currentDate).setHours(23, 59, 59, 999),
         };
         break;
-      case DateFilterType.WEEK:
+      }
+
+      case DateFilterType.WEEK: {
         const startOfWeek = new Date(currentDate);
         startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
-    
+
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
-    
-        dateFilter = {
-          $gte: startOfWeek,
-          $lt: endOfWeek,
-        };
+
+        dateFilter = { $gte: startOfWeek, $lt: endOfWeek };
         break;
-      case DateFilterType.MONTH:
+      }
+
+      case DateFilterType.MONTH: {
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         endOfMonth.setHours(23, 59, 59, 999);
-    
-        dateFilter = {
-          $gte: startOfMonth,
-          $lt: endOfMonth,
-        };
+
+        dateFilter = { $gte: startOfMonth, $lt: endOfMonth };
         break;
-      case DateFilterType.YEAR:
+      }
+
+      case DateFilterType.YEAR: {
         const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
         const endOfYear = new Date(currentDate.getFullYear() + 1, 0, 0);
         endOfYear.setHours(23, 59, 59, 999);
-    
-        dateFilter = {
-          $gte: startOfYear,
-          $lt: endOfYear,
-        };
+
+        dateFilter = { $gte: startOfYear, $lt: endOfYear };
         break;
-      case DateFilterType.CUSTOM:
-        const { startDate, endDate } = req.body; // Assuming custom dates are provided
+      }
+
+      case DateFilterType.CUSTOM: {
+        const { startDate, endDate } = req.query;
         if (!startDate || !endDate) {
           throw new Error("Start and End date are required for CUSTOM filter");
         }
-    
-        dateFilter = {
-          $gte: new Date(startDate),
-          $lt: new Date(endDate),
-        };
+        dateFilter = { $gte: new Date(startDate), $lt: new Date(endDate) };
         break;
+      }
+
       default:
-        throw new Error("Invalid DateFilterType");
+        dateFilter = null;
+        break;
     }
 
     const query = {
       $or: [{ userId }, { assignedEmail }],
-      ...(filter && { createdAt: dateFilter }),
+      ...(dateFilter && { createdAt: dateFilter }),
     };
 
-    const tasks = await TaskModel.find(query);
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const totalTasks = await TaskModel.countDocuments(query);
+
+    const tasks = await TaskModel.find(query)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
 
     if (!tasks || tasks.length === 0) {
       return res.status(204).json({
@@ -190,6 +194,11 @@ const getAllTaskDataOverview = async (req, res, next) => {
     return res.status(200).json({
       message: "Tasks fetched successfully",
       data: tasks,
+      pagination: {
+        totalTasks,
+        totalPages: Math.ceil(totalTasks / limit),
+        currentPage: parseInt(page),
+      },
     });
   } catch (error) {
     next(error);

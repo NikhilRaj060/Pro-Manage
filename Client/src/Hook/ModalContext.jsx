@@ -4,7 +4,7 @@ const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
   const [isTaskBuilderModalOpen, setisTaskBuilderModalOpen] = useState(false);
-  const [taskLink, setTaskLink] = useState("");
+  const [taskLink] = useState("");
   const [taskData, setTaskData] = useState(null);
   const [taskId, setTaskId] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -13,7 +13,7 @@ export const ModalProvider = ({ children }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [taskCreated, setTaskCreated] = useState(false);
 
-  const openTaskBuilderModal = (data = null, isEdit) => {
+  const openTaskBuilderModal = (isEdit, data = null) => {
     setIsEdit(isEdit);
     setTaskData(data);
     setisTaskBuilderModalOpen(true);

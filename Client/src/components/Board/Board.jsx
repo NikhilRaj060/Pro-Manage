@@ -12,6 +12,7 @@ import Fade from "@mui/material/Fade";
 import { GoPeople } from "react-icons/go";
 import AddUserModal from "../AddUserModal/AddUserModal";
 import { Modal, Box } from "@mui/material";
+import CustomDateRangePicker from "../CustomDateRangePicker/CustomDateRangePicker";
 import BoardSkeletonLoader from "./BoardSkeletonLoader";
 import { DateFilterType } from "../../model/taskEnum";
 
@@ -42,9 +43,12 @@ export default function Board() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState({
-    id: "week",
-    value: "This Week",
+    id: "",
+    value: "",
+    startDate: "",
+    endDate: "",
   });
+  const [isCustomDateModalOpen, setIsCustomDateModalOpen] = useState(false);
 
   let date = new Date();
   const handleClick = (event) => {
@@ -56,7 +60,7 @@ export default function Board() {
   };
 
   const fetchAllDataOverview = async (filter) => {
-    const data = await getAllTaskDataOverView(filter?.id);
+    const data = await getAllTaskDataOverView(filter?.id, 1, 20, filter?.startDate, filter?.endDate);
     if (data) {
       setIsLoading(false);
     }
@@ -73,7 +77,7 @@ export default function Board() {
 
     let dataTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 10000);
+    }, 500);
 
     return () => {
       clearTimeout(dataTimer);
@@ -89,7 +93,7 @@ export default function Board() {
 
     let dataTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 10000);
+    }, 500);
 
     return () => {
       clearTimeout(dataTimer);
@@ -98,7 +102,7 @@ export default function Board() {
 
   const fetchData = async (filter) => {
     try {
-      const updatedData = await getAllTaskDataOverView(filter);
+      const updatedData = await getAllTaskDataOverView(filter?.id, 1, 20, filter?.startDate, filter?.endDate);
 
       if (updatedData) {
         setIsLoading(false);
@@ -109,9 +113,24 @@ export default function Board() {
     }
   };
 
-  const handleFilter = (filter) => {
-    setFilter(filter);
-    handleClose();
+  const handleFilter = (selectedFilter) => {
+    if (selectedFilter.id === "custom") {
+      setIsCustomDateModalOpen(true);
+      handleClose();
+    } else {
+      setFilter({ id: selectedFilter.id, value: selectedFilter.value });
+      handleClose();
+    }
+  };
+
+  const applyCustomDateFilter = (startDate, endDate) => {
+    setFilter({
+      id: "custom",
+      value: "Custom Range",
+      startDate: startDate,
+      endDate: endDate,
+    });
+    setIsCustomDateModalOpen(false);
   };
 
   const handleAddPeople = () => {
@@ -202,6 +221,12 @@ export default function Board() {
           <AddUserModal />
         </Box>
       </Modal>
+
+      <CustomDateRangePicker
+        isOpen={isCustomDateModalOpen}
+        onClose={() => setIsCustomDateModalOpen(false)}
+        onApply={applyCustomDateFilter}
+      />
     </div>
   );
 }

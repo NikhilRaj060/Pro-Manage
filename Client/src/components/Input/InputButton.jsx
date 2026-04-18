@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { Icon } from "react-icons-kit";
-import { eyeOff as eyeOffIcon } from "react-icons-kit/feather/eyeOff";
-import { eye as eyeIcon } from "react-icons-kit/feather/eye";
+import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import style from "./InputButton.module.css";
 
 function InputButton({
@@ -19,19 +17,20 @@ function InputButton({
   fullWidth = false,
   multiple = false,
   customStyle,
-  inputIcon,
-  checked=false,
-  height
+  inputIcon, // optional custom icon (React Icon component)
+  checked = false,
+  height,
 }) {
   const [inputType, setInputType] = useState(type);
-  const [icon, setIcon] = useState(eyeOffIcon);
   const [isFocused, setIsFocused] = useState(false);
   const [isValue, setIsValue] = useState(false);
-  const [isIcon] = useState(!!inputIcon);
 
   const handleToggle = () => {
-    setInputType((prevType) => (prevType === "password" ? "text" : "password"));
-    setIcon((prevIcon) => (prevIcon === eyeOffIcon ? eyeIcon : eyeOffIcon));
+    if (type === "password") {
+      setInputType((prevType) =>
+        prevType === "password" ? "text" : "password"
+      );
+    }
   };
 
   const widthStyle = {
@@ -39,8 +38,8 @@ function InputButton({
   };
 
   const heightStyle = {
-    height: height ? height : "auto",
-  }
+    height: height || "auto",
+  };
 
   const checkboxStyle = {
     borderShadow: "none",
@@ -53,18 +52,12 @@ function InputButton({
   };
 
   const iconStyle = {
-    paddingLeft: "35px"
-  }
+    paddingLeft: "35px",
+  };
 
   const onChangeT = (e) => {
-    let isValueContained = e.target.value;
-    if (isValueContained) {
-      setIsValue(true);
-    } else {
-      setIsValue(false);
-    }
-    // You can also call the original onChange prop if needed
-    onChange(e);
+    setIsValue(!!e.target.value);
+    onChange?.(e);
   };
 
   return (
@@ -78,7 +71,7 @@ function InputButton({
             ? "valuecontained"
             : ""
         } ${style.input_container}`}
-        style={{...heightStyle,...widthStyle}}
+        style={{ ...heightStyle, ...widthStyle }}
       >
         <label
           htmlFor={id}
@@ -92,13 +85,21 @@ function InputButton({
         >
           {label}
         </label>
+
         {inputIcon && (
           <span className={style.input_icon_container} onClick={handleToggle}>
-            <Icon className={style.icon} icon={inputIcon} size={20} />{" "}
-            </span>
+            {inputIcon}
+          </span>
         )}
+
         <input
-          style={customStyle ? isIcon ? { ...iconStyle , ...widthStyle, ...customStyle } : { ...widthStyle, ...customStyle } : widthStyle}
+          style={
+            customStyle
+              ? inputIcon
+                ? { ...iconStyle, ...widthStyle, ...customStyle }
+                : { ...widthStyle, ...customStyle }
+              : widthStyle
+          }
           type={inputType}
           id={id}
           name={name}
@@ -107,36 +108,34 @@ function InputButton({
           required={required}
           multiple={multiple}
           placeholder={placeholder}
-          error={error}
           checked={checked}
           disabled={disabled}
           onChange={onChangeT}
-          labelprops={{
-            className: "before:content-none after:content-none",
-          }}
-          containerprops={{
-            className: "min-w-0",
-          }}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
+
+        {/* Password toggle eye icon */}
         {type === "password" && label !== "Confirm password" ? (
           <span className={style.icon_container} onClick={handleToggle}>
-            <Icon className={style.icon} icon={icon} size={20} />{" "}
+            {inputType === "password" ? (
+              <FaEyeSlash className={style.icon} size={20} />
+            ) : (
+              <FaEye className={style.icon} size={20} />
+            )}
           </span>
-        ) : (
-          <span className="hidden"></span>
-        )}
+        ) : null}
       </div>
-      {error ? (
+
+      {error && (
         <p
           className={style.error}
           style={
-            customStyle ? { "margin-top": "-20px", "margin-bottom": "8px" } : {}
+            customStyle ? { marginTop: "-20px", marginBottom: "8px" } : {}
           }
         >
           <span className={style.error_text}>{error}</span>
         </p>
-      ) : (
-        ""
       )}
     </>
   );

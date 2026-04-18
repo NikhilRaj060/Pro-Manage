@@ -43,9 +43,15 @@ const getAllTaskAnalytics = async () => {
   }
 };
 
-const getAllTaskDataOverView = async (filter) => {
+const getAllTaskDataOverView = async (filter, page, limit, startDate, endDate) => {
   try {
-    const reqUrl = `${backendUrl}/get-task-data-overview?filter=${filter}`;
+    if (!filter) {
+      filter = "today";
+    }
+    let reqUrl = `${backendUrl}/get-task-data-overview?filter=${filter}&page=${page}&limit=${limit}`;
+    if (startDate && endDate) {
+      reqUrl += `&startDate=${startDate}&endDate=${endDate}`;
+    }
     const token = localStorage.getItem("token");
     const headers = {
       Authorization: `Bearer ${token}`
@@ -54,7 +60,7 @@ const getAllTaskDataOverView = async (filter) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    if (error.response && error.response.data) {
+    if (error?.response?.data) {
       toast.error(error.response.data.message || "Something went wrong", {
         position: "top-center",
         autoClose: 5000,
